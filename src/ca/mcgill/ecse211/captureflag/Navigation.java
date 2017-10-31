@@ -2,6 +2,10 @@ package ca.mcgill.ecse211.captureflag;
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
+/*
+ *The Navigation class implements the logic of moving from one point to another, using the shortest path.
+ */
+
 public class Navigation extends Thread {
 
 	private static final int FORWARD_SPEED = 150;
@@ -14,6 +18,11 @@ public class Navigation extends Thread {
 	private Odometer odometer;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
 
+	/*
+	 * This is the constructor for the Navigation class.
+	 * @param odometer An instance of the Odometer class that is passed in from the CaptureFlag class.
+	 * @param leftMotor An instance of the EV3LargeRegulatedMotor that is passed in from the CaptureFlag class.
+	 */
 	public Navigation(Odometer odometer, EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor) {
 		this.odometer = odometer;
 		this.leftMotor = leftMotor;
