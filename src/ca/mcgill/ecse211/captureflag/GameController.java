@@ -2,6 +2,9 @@ package ca.mcgill.ecse211.captureflag;
 
 import lejos.hardware.Button;
 
+/*
+ * This class will implement the overall game logic that will follow according to our software flowchart
+ */
 public class GameController extends Thread {
 	
 	private LightLocalization li;
@@ -10,6 +13,7 @@ public class GameController extends Thread {
 	private UltrasonicPoller usPoller;
 	private Navigation nav;
 
+	//constructor
 	public GameController(LightLocalization li, UltrasonicLocalization us, LightPoller lp, UltrasonicPoller usPoller, Navigation nav) {
 		this.li = li;
 		this.us = us;

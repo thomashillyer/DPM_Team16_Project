@@ -7,6 +7,11 @@ import java.io.Console;
 
 import lejos.hardware.lcd.TextLCD;
 
+/*
+ * This class instantiates a thread to create a UI of odometer position and 
+ * orientation readings on the LCD screen of the Lego EV3 brick 
+ * 
+ */
 public class OdometryDisplay extends Thread {
 	private static final long DISPLAY_PERIOD = 250;
 	private Odometer odometer;
@@ -62,6 +67,13 @@ public class OdometryDisplay extends Thread {
 		}
 	}
 
+	/**
+	 * This method converts any double data type to a string that can be easily read off the LCD screen
+	 * 
+	 * @param x the double data type number to be converted 
+	 * @param places number of decimal places the double should be displayed up to
+	 * @return the converted string 
+	 */
 	private static String formattedDoubleToString(double x, int places) {
 		String result = "";
 		String stack = "";

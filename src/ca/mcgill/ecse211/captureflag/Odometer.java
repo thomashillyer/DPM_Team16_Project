@@ -2,6 +2,10 @@ package ca.mcgill.ecse211.captureflag;
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
+/*
+ * This class will instantiate an odometer that will allow us to keep track of and update our
+ * robot's position and orientation using the motors' built-in tachometers
+ */
 public class Odometer extends Thread {
 	// robot position
 	private double x;
@@ -47,7 +51,7 @@ public class Odometer extends Thread {
 			// dist = 2*PI*wheelRadius*wheelRotation/360
 			double distR = Math.PI * CaptureFlag.WHEEL_RADIUS * (currTachoR - rightMotorTachoCount) / 180;
 			double distL = Math.PI * CaptureFlag.WHEEL_RADIUS * (currTachoL - leftMotorTachoCount) / 180;
-			// calculate change in theta and center disctance
+			// calculate change in theta and center distance
 			double deltaD = .5 * (distR + distL);
 			double deltaT = (distL - distR) / CaptureFlag.TRACK;
 
@@ -86,6 +90,13 @@ public class Odometer extends Thread {
 		}
 	}
 
+	/**
+	 * Method assigns position array elements with x, y, and orientation values currently being read from odometer
+	 * if the corresponding boolean array element is true
+	 * 
+	 * @param position Array that contains x and y position and angle oriented to
+	 * @param update Boolean array that allows values to be assigned to position array if element is true
+	 */
 	public void getPosition(double[] position, boolean[] update) {
 		// ensure that the values don't change while the odometer is running
 		synchronized (lock) {
@@ -98,6 +109,10 @@ public class Odometer extends Thread {
 		}
 	}
 
+	/**
+	 * 
+	 * @return current x position read from odometer
+	 */
 	public double getX() {
 		double result;
 
@@ -108,6 +123,10 @@ public class Odometer extends Thread {
 		return result;
 	}
 
+	/**
+	 * 
+	 * @return current y position read from odometer
+	 */
 	public double getY() {
 		double result;
 
@@ -118,6 +137,10 @@ public class Odometer extends Thread {
 		return result;
 	}
 
+	/**
+	 * 
+	 * @return current angle robot is oriented in read from odometer
+	 */
 	public double getTheta() {
 		double result;
 
@@ -128,31 +151,29 @@ public class Odometer extends Thread {
 		return result;
 	}
 
-	// mutators
-	public void setPosition(double[] position, boolean[] update) {
-		// ensure that the values don't change while the odometer is running
-		synchronized (lock) {
-			if (update[0])
-				x = position[0];
-			if (update[1])
-				y = position[1];
-			if (update[2])
-				theta = position[2];
-		}
-	}
-
+	/**
+	 * 
+	 * @param x X position to update on odometer
+	 */
 	public void setX(double x) {
 		synchronized (lock) {
 			this.x = x;
 		}
 	}
 
+	/**
+	 * 
+	 * @param y Y position to update on odometer
+	 */
 	public void setY(double y) {
 		synchronized (lock) {
 			this.y = y;
 		}
 	}
-
+	/**
+	 * 
+	 * @param theta Angle to update on odometer
+	 */
 	public void setTheta(double theta) {
 		synchronized (lock) {
 			this.theta = theta;
