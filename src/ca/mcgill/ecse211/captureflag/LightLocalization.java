@@ -10,13 +10,17 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
 
+/*
+ * This class provides the light localization that can be used at any point to relocalize to the nearest grid intersection
+ */
+
 public class LightLocalization {
+	//object instances
 	private Navigation nav;
 	private Odometer odometer;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
-	private EV3MediumRegulatedMotor sensorMotor;
 	
-	// data
+	//data
 	private int filterCounter = 0;
 	private float oldValue = 0;
 	private int derivativeThreshold = -30;
@@ -26,6 +30,7 @@ public class LightLocalization {
 	private double x, y;
 	private double deltaThetaY;
 
+	//TODO Remove x0, y0, xC, yC, and corner as the 
 	private int x0;
 	private int y0;
 	private int xC;
@@ -39,20 +44,28 @@ public class LightLocalization {
 	private boolean detectSingleLine = false;
 	private boolean detectFourLines = false;
 
+	/*
+	 * The constructor for LightLocalization class.
+	 * @param leftMotor An instance of the EV3LargeRegulatedMotor that controls the left motor.
+	 * @param rightMotor An instance of the EV3LargeRegulatedMotor that controls the right motor.
+	 * @param odometer An instance of the Odometer class.
+	 * @param nav An instance of the Navigation class.
+	 */
 	public LightLocalization(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,
-			EV3MediumRegulatedMotor sensorMotor, Odometer odometer, Navigation nav, int[] points) {
+			Odometer odometer, Navigation nav) {
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
-		this.sensorMotor = sensorMotor;
 		this.odometer = odometer;
 		this.nav = nav;
-		x0 = points[0];
-		y0 = points[1];
-		xC = points[2];
-		yC = points[3];
-		corner = points[4];
 	}
 
+	
+	/*
+	 *This method gets input from the LightPoller instance that is running. 
+	 *The method will check if the difference between the passed in value and the previously passed value is less than the threshold for detecting a black line.
+	 *It then handles what happens if a black line is detected depending on the state of the robot.
+	 *@param value A value that is passed in from the LightPoller class. The value is retrieved by sampling the color sensor.
+	 */
 	protected void processData(int value) {
 		long correctionStart, correctionEnd;
 		correctionStart = System.currentTimeMillis();
@@ -95,6 +108,16 @@ public class LightLocalization {
 		}
 	}
 
+	/*
+	 * This method localizes specifically from the starting corner of the board. The following are the steps it takes:
+	 * <ol> 
+	 * <li>It turns the robot 45 degrees</li> 
+	 * <li>The robot goes forward until a line is detected</li>
+	 * <li>The robot reverses by the length of the robot</li>
+	 * <li>The robot rotates 360 degrees to detect four black lines</li>
+	 * <li>The distance and angle offset are calculated</li>
+	 * <li>Corrects the robots orientation</li>
+	 */
 	protected void cornerLocalization() {
 		detectSingleLine = true;
 		// Set the acceleration of both motor
@@ -114,8 +137,8 @@ public class LightLocalization {
 		detectFourLines = true;
 		
 		// rotate the robot 360 degrees
-		leftMotor.rotate(convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true);
-		rightMotor.rotate(-convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), false);
+		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true);
+		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), false);
 		
 		detectFourLines = false;
 		
@@ -123,7 +146,7 @@ public class LightLocalization {
 		nav.travelTo(0, 0);
 		nav.turnTo(-(odometer.getTheta() + (8 * Math.PI / 180)));
 		
-		//TODO set odometer based on corner
+		//TODO set odometer based on corner passed in from server
 	}
 
 	private void secondLocalization() {
@@ -170,13 +193,10 @@ public class LightLocalization {
 
 	/**
 	 * This method calculates the robot's actual x and y position using the angle
-	 * values determine earlier using trigonometry, and then determine the theta by
-	 * which the odometer is off. Then, it updates the x, y and theta values of the
+	 * values determined earlier.Using trigonometry, the theta by
+	 * which the odometer is off is calculated. Then, it updates the x, y, and theta values of the
 	 * odometer in order to fix them. Then, it uses the navigation travelTo method
-	 * to travel to the inputted destination.
-	 * 
-	 * @param xdestination
-	 * @param ydestination
+	 * to travel to the inputed destination.
 	 */
 	private void correctOdometer() {
 		System.out.println("X- : " + xminus);
@@ -214,8 +234,8 @@ public class LightLocalization {
 		rightMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
 
 		// Rotate the robot by 45 degrees
-		leftMotor.rotate(convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 45), true);
-		rightMotor.rotate(-convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 45), false);
+		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 45), true);
+		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 45), false);
 
 		while(detectSingleLine) {
 			leftMotor.forward();
@@ -226,15 +246,7 @@ public class LightLocalization {
 		rightMotor.stop(true);
 		
 		// Move the robot backwards 1.5 * its center distance
-		rightMotor.rotate(-convertDistance(CaptureFlag.WHEEL_RADIUS, 1.15 * CaptureFlag.BOT_LENGTH), true);
-		leftMotor.rotate(-convertDistance(CaptureFlag.WHEEL_RADIUS, 1.15 * CaptureFlag.BOT_LENGTH), false);
-	}
-
-	private static int convertDistance(double radius, double distance) {
-		return (int) ((180.0 * distance) / (Math.PI * radius));
-	}
-
-	private static int convertAngle(double radius, double TRACK, double angle) {
-		return convertDistance(radius, Math.PI * TRACK * angle / 360.0);
+		rightMotor.rotate(-CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, 1.15 * CaptureFlag.BOT_LENGTH), true);
+		leftMotor.rotate(-CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, 1.15 * CaptureFlag.BOT_LENGTH), false);
 	}
 }

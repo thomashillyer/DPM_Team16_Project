@@ -11,6 +11,12 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
 
+/*
+ * CaptureFlag is the main class that instantiates all of the individual units that will be needed to operate the robot. 
+ * It also has constants that are used in the other classes of the project, as well as static methods. 
+ * This is to make sure that setting any value is consistent among all classes, and that certain methods are not copied over into all of the other classes.
+ */
+
 public class CaptureFlag {
 	protected static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
 
@@ -61,7 +67,7 @@ public class CaptureFlag {
 		SampleProvider colorSensorValue = colorSamplerSensor.getMode("Red");
 		float[] colorSensorData = new float[colorSamplerSensor.sampleSize()];
 
-		
+		//instantiate classes
 		Odometer odometer = new Odometer(leftMotor, rightMotor);
 		OdometryDisplay odoDispl = new OdometryDisplay(odometer, screen);
 		Navigation nav = new Navigation(odometer, leftMotor, rightMotor);
@@ -75,11 +81,13 @@ public class CaptureFlag {
 		} while (option != Button.ID_LEFT && option != Button.ID_RIGHT); // and wait for a button press. The button
 
 		//pass points to light localization
+		//TODO the following code is vestigial, game data will be retrieved from the server. Remove it to make way for getting data from server. 
 		int[] points = { x0, y0, xC, yC, corner };
-		LightLocalization lightLocal = new LightLocalization(leftMotor, rightMotor, sensorMotor, odometer, nav, points);
+		LightLocalization lightLocal = new LightLocalization(leftMotor, rightMotor, odometer, nav);
 		LightPoller lp = new LightPoller(colorSensorValue, colorSensorData, lightLocal);
 		GameController gc = new GameController(lightLocal, usLocal, lp, usPoller, nav);
 		
+		//TODO remove the switch case as it will not be used for the final project. Could maybe stay for testing purposes.
 		switch (option) {
 		case Button.ID_LEFT:
 			odometer.start();
@@ -108,11 +116,14 @@ public class CaptureFlag {
 			break;
 		}
 
-		while (Button.waitForAnyPress() != Button.ID_ESCAPE)
-			;
+		//escape at any point during program execution if escape button is pressed
+		while (Button.waitForAnyPress() != Button.ID_ESCAPE);
 		System.exit(0);
 	}
 
+	/*
+	 * Prints to the screen a menu for setting the travel to points for the ZipLine lab, as well as a menu for choosing either rising or falling edge localization.
+	 */
 	private static void printMenu() {
 		boolean enter = false;
 		t.clear();
@@ -150,6 +161,15 @@ public class CaptureFlag {
 		t.drawString("right = risingEdge", 0, 1);
 	}
 
+	/*
+	 * Prints to the screen a menu for setting the travel to points for the ZipLine lab.
+	 * For setting the points, the used can push the up or down buttons to change the value of the displayed value.
+	 * When the user wants submit the value, the enter button should be pressed.
+	 * @param disp The string to display to the LCD screen
+	 * @param x The x position on the screen to display the string
+	 * @param y The y position on the screen to display the string
+	 * @return An integer that represents what the user has chosen for the displayed value.
+	 */
 	public static int printXY(String disp, int x, int y) {
 		boolean enter = false;
 		int counter = 0;
@@ -175,10 +195,24 @@ public class CaptureFlag {
 		return counter;
 	}
 
+	/*
+	 * This method converts a distance into a number of rotations the motor should complete to go the distance.
+	 * @param radius The radius of the robots wheel.
+	 * @param distance The desired distance that the robot should travel.
+	 * @return An integer representing the amount of rotations the robot should turn to go the given distance.
+	 */
 	protected static int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
 	}
 
+	/*
+	 * This method converts a given angle into a number of rotations the motor should complete to rotate the angle.
+	 * Uses the convertDistance method.
+	 * @param radius The radius of the robots wheel.
+	 * @param TRACK The track length, in cm, of the robot.
+	 * @param angle The angle that should be turned, in degrees.
+	 * @return An integer representing the amount of rotations the robot should turn to go turn the given angle.
+	 */
 	protected static int convertAngle(double radius, double TRACK, double angle) {
 		return convertDistance(radius, Math.PI * TRACK * angle / 360.0);
 	}

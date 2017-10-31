@@ -20,8 +20,9 @@ public class Navigation extends Thread {
 
 	/*
 	 * This is the constructor for the Navigation class.
-	 * @param odometer An instance of the Odometer class that is passed in from the CaptureFlag class.
-	 * @param leftMotor An instance of the EV3LargeRegulatedMotor that is passed in from the CaptureFlag class.
+	 * @param odometer An instance of the Odometer class.
+	 * @param leftMotor An instance of the EV3LargeRegulatedMotor that controls the left motor.
+	 * @param rightMotor An instance of the EV3LargeRegulatedMotor that controls the right motor.
 	 */
 	public Navigation(Odometer odometer, EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor) {
 		this.odometer = odometer;
@@ -30,10 +31,6 @@ public class Navigation extends Thread {
 	}
 
 	public void run() {
-		odometer.setX(0);
-		odometer.setY(0);
-		odometer.setTheta(0);
-
 		leftMotor.stop(true);
 		rightMotor.stop(true);
 
@@ -82,8 +79,8 @@ public class Navigation extends Thread {
 		leftMotor.setSpeed(CaptureFlag.FORWARDSPEED);
 		rightMotor.setSpeed(CaptureFlag.FORWARDSPEED);
 
-		rightMotor.rotate(convertDistance(CaptureFlag.WHEEL_RADIUS, distToTravel), true);
-		leftMotor.rotate(convertDistance(CaptureFlag.WHEEL_RADIUS, distToTravel), false);
+		rightMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, distToTravel), true);
+		leftMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, distToTravel), false);
 
 		leftMotor.stop(true);
 		rightMotor.stop(true);
@@ -118,22 +115,14 @@ public class Navigation extends Thread {
 
 		// turn to the left if angle is negative
 		if (theta < 0) {
-			leftMotor.rotate(-convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -theta+2), true);
-			rightMotor.rotate(convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -theta+2), false);
+			leftMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -theta+2), true);
+			rightMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -theta+2), false);
 		}
 		// turn to the right if angle is positive
 		else {
-			leftMotor.rotate(convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, theta-2), true);
-			rightMotor.rotate(-convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, theta-2), false);
+			leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, theta-2), true);
+			rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, theta-2), false);
 		}
 
-	}
-
-	private static int convertDistance(double radius, double distance) {
-		return (int) ((180.0 * distance) / (Math.PI * radius));
-	}
-
-	private static int convertAngle(double radius, double width, double angle) {
-		return convertDistance(radius, Math.PI * width * angle / 360.0);
 	}
 }
