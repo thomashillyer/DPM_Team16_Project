@@ -10,7 +10,7 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
 
-/*
+/**
  * This class provides the light localization that can be used at any point to relocalize to the nearest grid intersection
  */
 
@@ -44,7 +44,7 @@ public class LightLocalization {
 	private boolean detectSingleLine = false;
 	private boolean detectFourLines = false;
 
-	/*
+	/**
 	 * The constructor for LightLocalization class.
 	 * @param leftMotor An instance of the EV3LargeRegulatedMotor that controls the left motor.
 	 * @param rightMotor An instance of the EV3LargeRegulatedMotor that controls the right motor.
@@ -60,7 +60,7 @@ public class LightLocalization {
 	}
 
 	
-	/*
+	/**
 	 *This method gets input from the LightPoller instance that is running. 
 	 *The method will check if the difference between the passed in value and the previously passed value is less than the threshold for detecting a black line.
 	 *It then handles what happens if a black line is detected depending on the state of the robot.
@@ -108,7 +108,7 @@ public class LightLocalization {
 		}
 	}
 
-	/*
+	/**
 	 * This method localizes specifically from the starting corner of the board. The following are the steps it takes:
 	 * <ol> 
 	 * <li>It turns the robot 45 degrees</li> 
@@ -117,6 +117,7 @@ public class LightLocalization {
 	 * <li>The robot rotates 360 degrees to detect four black lines</li>
 	 * <li>The distance and angle offset are calculated</li>
 	 * <li>Corrects the robots orientation</li>
+	 * </ol>
 	 */
 	protected void cornerLocalization() {
 		detectSingleLine = true;
@@ -149,7 +150,7 @@ public class LightLocalization {
 		//TODO set odometer based on corner passed in from server
 	}
 
-	private void secondLocalization() {
+	//private void secondLocalization() {
 //		double theta = odometer.getTheta();
 //		lineCounter = 0;
 //
@@ -189,7 +190,7 @@ public class LightLocalization {
 //		} else if (diff > derivativeThreshold) {
 //			filterCounter = 0;
 //		}
-	}
+//	}
 
 	/**
 	 * This method calculates the robot's actual x and y position using the angle

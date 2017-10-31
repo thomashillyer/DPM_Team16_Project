@@ -11,7 +11,7 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
 
-/*
+/**
  * CaptureFlag is the main class that instantiates all of the individual units that will be needed to operate the robot. 
  * It also has constants that are used in the other classes of the project, as well as static methods. 
  * This is to make sure that setting any value is consistent among all classes, and that certain methods are not copied over into all of the other classes.
@@ -121,7 +121,7 @@ public class CaptureFlag {
 		System.exit(0);
 	}
 
-	/*
+	/**
 	 * Prints to the screen a menu for setting the travel to points for the ZipLine lab, as well as a menu for choosing either rising or falling edge localization.
 	 */
 	private static void printMenu() {
@@ -161,7 +161,7 @@ public class CaptureFlag {
 		t.drawString("right = risingEdge", 0, 1);
 	}
 
-	/*
+	/**
 	 * Prints to the screen a menu for setting the travel to points for the ZipLine lab.
 	 * For setting the points, the used can push the up or down buttons to change the value of the displayed value.
 	 * When the user wants submit the value, the enter button should be pressed.
@@ -195,7 +195,7 @@ public class CaptureFlag {
 		return counter;
 	}
 
-	/*
+	/**
 	 * This method converts a distance into a number of rotations the motor should complete to go the distance.
 	 * @param radius The radius of the robots wheel.
 	 * @param distance The desired distance that the robot should travel.
@@ -205,7 +205,7 @@ public class CaptureFlag {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
 	}
 
-	/*
+	/**
 	 * This method converts a given angle into a number of rotations the motor should complete to rotate the angle.
 	 * Uses the convertDistance method.
 	 * @param radius The radius of the robots wheel.

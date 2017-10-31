@@ -2,7 +2,7 @@ package ca.mcgill.ecse211.captureflag;
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
-/*
+/**
  * This class will instantiate an odometer that will allow us to keep track of and update our
  * robot's position and orientation using the motors' built-in tachometers
  */

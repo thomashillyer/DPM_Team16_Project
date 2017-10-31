@@ -2,7 +2,7 @@ package ca.mcgill.ecse211.captureflag;
 
 import lejos.robotics.SampleProvider;
 
-/*
+/**
  * This class will instantiate a poller thread and run it so that we can get data
  * samples from the ultrasonic sensor
  */
@@ -32,7 +32,10 @@ public class UltrasonicPoller extends Thread {
 		}
 	}
 	
-	//Allows thread to be stopped without deadlock
+	/**
+	 * Allows thread to be stopped without deadlock
+	 * 
+	 */
 	protected void killTask() {
 		kill = true;
 	}

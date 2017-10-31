@@ -7,7 +7,7 @@ import java.io.Console;
 
 import lejos.hardware.lcd.TextLCD;
 
-/*
+/**
  * This class instantiates a thread to create a UI of odometer position and 
  * orientation readings on the LCD screen of the Lego EV3 brick 
  * 

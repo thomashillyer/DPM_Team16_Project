@@ -2,7 +2,7 @@ package ca.mcgill.ecse211.captureflag;
 
 import lejos.hardware.Button;
 
-/*
+/**
  * This class will implement the overall game logic that will follow according to our software flowchart
  */
 public class GameController extends Thread {
