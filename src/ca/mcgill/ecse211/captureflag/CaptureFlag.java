@@ -6,11 +6,12 @@ import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.port.Port;
+import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
 
-public class ZiplineLab {
+public class CaptureFlag {
 	protected static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
 
 	protected static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
@@ -19,6 +20,7 @@ public class ZiplineLab {
 			LocalEV3.get().getPort("C"));
 
 	private static final Port usPort = LocalEV3.get().getPort("S1");
+	private static final Port lightSampler = LocalEV3.get().getPort("S2");
 
 	public static TextLCD t = LocalEV3.get().getTextLCD();
 
@@ -28,6 +30,7 @@ public class ZiplineLab {
 
 	protected static final int ROTATIONSPEED = 100;
 	protected static final int ACCELERATION = 1000;
+	protected static final int NAV_ACCELERATION = 100;
 	protected static final int FORWARDSPEED = 150;
 
 	private static final int FILTER_OUT = 23;
@@ -52,6 +55,11 @@ public class ZiplineLab {
 		SensorModes usSensor = new EV3UltrasonicSensor(usPort); // usSensor is the instance
 		SampleProvider usDistance = usSensor.getMode("Distance"); // usDistance provides samples from												// this instance
 		float[] usData = new float[usDistance.sampleSize()]; // usData is the buffer in which data are
+		
+		//set up color sensor
+		SensorModes colorSamplerSensor = new EV3ColorSensor(lightSampler);
+		SampleProvider colorSensorValue = colorSamplerSensor.getMode("Red");
+		float[] colorSensorData = new float[colorSamplerSensor.sampleSize()];
 
 		
 		Odometer odometer = new Odometer(leftMotor, rightMotor);
@@ -69,8 +77,8 @@ public class ZiplineLab {
 		//pass points to light localization
 		int[] points = { x0, y0, xC, yC, corner };
 		LightLocalization lightLocal = new LightLocalization(leftMotor, rightMotor, sensorMotor, odometer, nav, points);
-		LightPoller lp = new LightPoller(lightLocal);
-		GameController gc = new GameController(lightLocal, usLocal, lp, usPoller);
+		LightPoller lp = new LightPoller(colorSensorValue, colorSensorData, lightLocal);
+		GameController gc = new GameController(lightLocal, usLocal, lp, usPoller, nav);
 		
 		switch (option) {
 		case Button.ID_LEFT:

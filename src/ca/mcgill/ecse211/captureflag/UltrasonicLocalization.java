@@ -47,16 +47,16 @@ public class UltrasonicLocalization implements UltrasonicController {
 	protected void localize() {
 
 		leftMotor.stop();
-		leftMotor.setAcceleration(ZiplineLab.ACCELERATION);
+		leftMotor.setAcceleration(CaptureFlag.ACCELERATION);
 		rightMotor.stop();
-		rightMotor.setAcceleration(ZiplineLab.ACCELERATION);
+		rightMotor.setAcceleration(CaptureFlag.ACCELERATION);
 
-		leftMotor.setSpeed(ZiplineLab.ROTATIONSPEED);
-		rightMotor.setSpeed(ZiplineLab.ROTATIONSPEED);
+		leftMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
+		rightMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
 
 		// rotate 360 degrees to scan walls
-		leftMotor.rotate(ZiplineLab.convertAngle(ZiplineLab.WHEEL_RADIUS, ZiplineLab.TRACK, 360), true);
-		rightMotor.rotate(-ZiplineLab.convertAngle(ZiplineLab.WHEEL_RADIUS, ZiplineLab.TRACK, 360), true);
+		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true);
+		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true);
 
 		/*
 		 * while robot is rotating, compare the distance returned by the ultrasonic
@@ -94,9 +94,9 @@ public class UltrasonicLocalization implements UltrasonicController {
 		// System.out.println(deltaTheta);
 		// rotate to face 0 degrees
 		leftMotor.rotate(
-				-ZiplineLab.convertAngle(ZiplineLab.WHEEL_RADIUS, ZiplineLab.TRACK, deltaTheta * 180 / Math.PI), true);
+				-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, deltaTheta * 180 / Math.PI), true);
 		rightMotor.rotate(
-				ZiplineLab.convertAngle(ZiplineLab.WHEEL_RADIUS, ZiplineLab.TRACK, deltaTheta * 180 / Math.PI), false);
+				CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, deltaTheta * 180 / Math.PI), false);
 
 	}
 

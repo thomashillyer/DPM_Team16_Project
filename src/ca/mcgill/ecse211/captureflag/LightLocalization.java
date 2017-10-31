@@ -11,19 +11,11 @@ import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
 
 public class LightLocalization {
-
-	private static final Port lightSampler = LocalEV3.get().getPort("S2");
-
-	private SensorModes colosSamplerSensor = new EV3ColorSensor(lightSampler);
-	private SampleProvider colorSensorValue = colosSamplerSensor.getMode("Red");
-
 	private Navigation nav;
-
-	private float[] colorSensorData = new float[colosSamplerSensor.sampleSize()];
-
 	private Odometer odometer;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
 	private EV3MediumRegulatedMotor sensorMotor;
+	
 	// data
 	private int filterCounter = 0;
 	private float oldValue = 0;
@@ -61,17 +53,10 @@ public class LightLocalization {
 		corner = points[4];
 	}
 
-	protected void processData() {
+	protected void processData(int value) {
 		long correctionStart, correctionEnd;
 		correctionStart = System.currentTimeMillis();
-
-		// fetching the values from the color sensor
-		colorSensorValue.fetchSample(colorSensorData, 0);
-
-		// getting the value returned from the sensor, and multiply it by
-		// 1000 to scale
-		float value = colorSensorData[0] * 1000;
-
+		
 		// computing the derivative at each point
 		float diff = value - oldValue;
 
@@ -114,71 +99,73 @@ public class LightLocalization {
 		detectSingleLine = true;
 		// Set the acceleration of both motor
 		leftMotor.stop();
-		leftMotor.setAcceleration(ZiplineLab.ACCELERATION);
+		leftMotor.setAcceleration(CaptureFlag.ACCELERATION);
 		rightMotor.stop();
-		rightMotor.setAcceleration(ZiplineLab.ACCELERATION);
+		rightMotor.setAcceleration(CaptureFlag.ACCELERATION);
 
 		// Adjust the robot position, before it starts to rotate to ensure that
 		// the light sensor will cross 4 black lines
 		adjustRobotStartingPosition();
 
 		// set the robot wheel's rotation speed to both motors
-		leftMotor.setSpeed(ZiplineLab.ROTATIONSPEED);
-		rightMotor.setSpeed(ZiplineLab.ROTATIONSPEED);
+		leftMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
+		rightMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
 
 		detectFourLines = true;
 		
 		// rotate the robot 360 degrees
-		leftMotor.rotate(convertAngle(ZiplineLab.WHEEL_RADIUS, ZiplineLab.TRACK, 360), true);
-		rightMotor.rotate(-convertAngle(ZiplineLab.WHEEL_RADIUS, ZiplineLab.TRACK, 360), false);
+		leftMotor.rotate(convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true);
+		rightMotor.rotate(-convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), false);
 		
 		detectFourLines = false;
 		
 		correctOdometer();
 		nav.travelTo(0, 0);
 		nav.turnTo(-(odometer.getTheta() + (8 * Math.PI / 180)));
+		
+		//TODO set odometer based on corner
 	}
 
 	private void secondLocalization() {
-		double theta = odometer.getTheta();
-		lineCounter = 0;
-
-		// fetching the values from the color sensor
-		colorSensorValue.fetchSample(colorSensorData, 0);
-
-		// getting the value returned from the sensor, and multiply it by
-		// 1000 to scale
-		float value = colorSensorData[0] * 1000;
-
-		// computing the derivative at each point
-		float diff = value - oldValue;
-
-		// storing the current value, to be able to get the derivative on
-		// the next iteration
-		oldValue = value;
-		if (diff < derivativeThreshold && filterCounter == 0) {
-			Sound.beep();
-			filterCounter++;
-			lineCounter++;
-
-			if (lineCounter == 1) {
-				yminus = odometer.getTheta();
-
-			} else if (lineCounter == 2) {
-				xminus = odometer.getTheta();
-
-			} else if (lineCounter == 3) {
-				yplus = odometer.getTheta();
-
-			} else if (lineCounter == 4) {
-				xplus = odometer.getTheta();
-			}
-
-		} else if (diff < derivativeThreshold && filterCounter > 0) {
-			filterCounter++;
-		} else if (diff > derivativeThreshold) {
-			filterCounter = 0;
-		}
+//		double theta = odometer.getTheta();
+//		lineCounter = 0;
+//
+//		// fetching the values from the color sensor
+//		colorSensorValue.fetchSample(colorSensorData, 0);
+//
+//		// getting the value returned from the sensor, and multiply it by
+//		// 1000 to scale
+//		float value = colorSensorData[0] * 1000;
+//
+//		// computing the derivative at each point
+//		float diff = value - oldValue;
+//
+//		// storing the current value, to be able to get the derivative on
+//		// the next iteration
+//		oldValue = value;
+//		if (diff < derivativeThreshold && filterCounter == 0) {
+//			Sound.beep();
+//			filterCounter++;
+//			lineCounter++;
+//
+//			if (lineCounter == 1) {
+//				yminus = odometer.getTheta();
+//
+//			} else if (lineCounter == 2) {
+//				xminus = odometer.getTheta();
+//
+//			} else if (lineCounter == 3) {
+//				yplus = odometer.getTheta();
+//
+//			} else if (lineCounter == 4) {
+//				xplus = odometer.getTheta();
+//			}
+//
+//		} else if (diff < derivativeThreshold && filterCounter > 0) {
+//			filterCounter++;
+//		} else if (diff > derivativeThreshold) {
+//			filterCounter = 0;
+//		}
 	}
 
 	/**
@@ -200,8 +187,8 @@ public class LightLocalization {
 		thetay = yminus - yplus;
 		thetax = xplus - xminus;
 
-		this.x = -ZiplineLab.BOT_LENGTH * Math.cos(thetay / 2.0);
-		this.y = -ZiplineLab.BOT_LENGTH * Math.cos(thetax / 2.0);
+		this.x = -CaptureFlag.BOT_LENGTH * Math.cos(thetay / 2.0);
+		this.y = -CaptureFlag.BOT_LENGTH * Math.cos(thetax / 2.0);
 		deltaThetaY = (Math.PI / 2.0) - yminus + Math.PI + (thetay / 2.0);
 
 		odometer.setX(this.x);
@@ -223,12 +210,12 @@ public class LightLocalization {
 	 */
 	private void adjustRobotStartingPosition() {
 		// Set the wheel's rotation speed to ROTATESPEED
-		leftMotor.setSpeed(ZiplineLab.ROTATIONSPEED);
-		rightMotor.setSpeed(ZiplineLab.ROTATIONSPEED);
+		leftMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
+		rightMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
 
 		// Rotate the robot by 45 degrees
-		leftMotor.rotate(convertAngle(ZiplineLab.WHEEL_RADIUS, ZiplineLab.TRACK, 45), true);
-		rightMotor.rotate(-convertAngle(ZiplineLab.WHEEL_RADIUS, ZiplineLab.TRACK, 45), false);
+		leftMotor.rotate(convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 45), true);
+		rightMotor.rotate(-convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 45), false);
 
 		while(detectSingleLine) {
 			leftMotor.forward();
@@ -239,8 +226,8 @@ public class LightLocalization {
 		rightMotor.stop(true);
 		
 		// Move the robot backwards 1.5 * its center distance
-		rightMotor.rotate(-convertDistance(ZiplineLab.WHEEL_RADIUS, 1.15 * ZiplineLab.BOT_LENGTH), true);
-		leftMotor.rotate(-convertDistance(ZiplineLab.WHEEL_RADIUS, 1.15 * ZiplineLab.BOT_LENGTH), false);
+		rightMotor.rotate(-convertDistance(CaptureFlag.WHEEL_RADIUS, 1.15 * CaptureFlag.BOT_LENGTH), true);
+		leftMotor.rotate(-convertDistance(CaptureFlag.WHEEL_RADIUS, 1.15 * CaptureFlag.BOT_LENGTH), false);
 	}
 
 	private static int convertDistance(double radius, double distance) {

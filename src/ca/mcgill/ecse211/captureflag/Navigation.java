@@ -53,8 +53,8 @@ public class Navigation extends Thread {
 
 		// calculating the information needed (destination - current) for both y
 		// and x, in order to calculate the minimum angle using arctan
-		double deltaX = (x * ZiplineLab.TILE_LENGTH) - currX;
-		double deltaY = (y * ZiplineLab.TILE_LENGTH) - currY;
+		double deltaX = (x * CaptureFlag.TILE_LENGTH) - currX;
+		double deltaY = (y * CaptureFlag.TILE_LENGTH) - currY;
 
 		// calculating the minimum angle using Math.atan2 method
 		double deltaTheta = Math.atan2(deltaX, deltaY) - currTheta;
@@ -70,11 +70,11 @@ public class Navigation extends Thread {
 
 		// travel to the next point, and don't wait until the action is
 		// complete. So the boolean in both rotate method should be true
-		leftMotor.setSpeed(ZiplineLab.FORWARDSPEED);
-		rightMotor.setSpeed(ZiplineLab.FORWARDSPEED);
+		leftMotor.setSpeed(CaptureFlag.FORWARDSPEED);
+		rightMotor.setSpeed(CaptureFlag.FORWARDSPEED);
 
-		rightMotor.rotate(convertDistance(ZiplineLab.WHEEL_RADIUS, distToTravel), true);
-		leftMotor.rotate(convertDistance(ZiplineLab.WHEEL_RADIUS, distToTravel), false);
+		rightMotor.rotate(convertDistance(CaptureFlag.WHEEL_RADIUS, distToTravel), true);
+		leftMotor.rotate(convertDistance(CaptureFlag.WHEEL_RADIUS, distToTravel), false);
 
 		leftMotor.stop(true);
 		rightMotor.stop(true);
@@ -94,8 +94,8 @@ public class Navigation extends Thread {
 	 *            The angle by which the cart should turn.
 	 */
 	public void turnTo(double theta) {
-		leftMotor.setSpeed(ZiplineLab.ROTATIONSPEED);
-		rightMotor.setSpeed(ZiplineLab.ROTATIONSPEED);
+		leftMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
+		rightMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
 
 		// adjusting the angle in order to have an optimal turn (a turn with the
 		// minimum angle)
@@ -109,13 +109,13 @@ public class Navigation extends Thread {
 
 		// turn to the left if angle is negative
 		if (theta < 0) {
-			leftMotor.rotate(-convertAngle(ZiplineLab.WHEEL_RADIUS, ZiplineLab.TRACK, -theta), true);
-			rightMotor.rotate(convertAngle(ZiplineLab.WHEEL_RADIUS, ZiplineLab.TRACK, -theta), false);
+			leftMotor.rotate(-convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -theta+2), true);
+			rightMotor.rotate(convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -theta+2), false);
 		}
 		// turn to the right if angle is positive
 		else {
-			leftMotor.rotate(convertAngle(ZiplineLab.WHEEL_RADIUS, ZiplineLab.TRACK, theta), true);
-			rightMotor.rotate(-convertAngle(ZiplineLab.WHEEL_RADIUS, ZiplineLab.TRACK, theta), false);
+			leftMotor.rotate(convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, theta-2), true);
+			rightMotor.rotate(-convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, theta-2), false);
 		}
 
 	}

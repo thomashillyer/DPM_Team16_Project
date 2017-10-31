@@ -45,11 +45,11 @@ public class Odometer extends Thread {
 
 			// calculate distance of each wheel
 			// dist = 2*PI*wheelRadius*wheelRotation/360
-			double distR = Math.PI * ZiplineLab.WHEEL_RADIUS * (currTachoR - rightMotorTachoCount) / 180;
-			double distL = Math.PI * ZiplineLab.WHEEL_RADIUS * (currTachoL - leftMotorTachoCount) / 180;
+			double distR = Math.PI * CaptureFlag.WHEEL_RADIUS * (currTachoR - rightMotorTachoCount) / 180;
+			double distL = Math.PI * CaptureFlag.WHEEL_RADIUS * (currTachoL - leftMotorTachoCount) / 180;
 			// calculate change in theta and center disctance
 			double deltaD = .5 * (distR + distL);
-			double deltaT = (distL - distR) / ZiplineLab.TRACK;
+			double deltaT = (distL - distR) / CaptureFlag.TRACK;
 
 			synchronized (lock) {
 				// set all values in sync block to avoid race conditions
