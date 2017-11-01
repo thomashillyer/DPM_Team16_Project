@@ -1,7 +1,6 @@
 package ca.mcgill.ecse211.captureflag;
 
 import ca.mcgill.ecse211.captureflag.Odometer;
-import ca.mcgill.ecse211.captureflag.UltrasonicController;
 import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
@@ -9,7 +8,7 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
  * The UltrasonicLocalization class is used to orient the robot to 0 degrees. It is used only in the beginning of the competition, when the robot is still in the corner.
  */
 
-public class UltrasonicLocalization implements UltrasonicController {
+public class UltrasonicLocalization{
 
 	private final int HORIZONTAL_CONST = 35;
 	private final int HORIZONTAL_MARGIN = 2;
@@ -111,12 +110,11 @@ public class UltrasonicLocalization implements UltrasonicController {
 
 	}
 
-	@Override
 	public int readUSDistance() {
 		return this.distanceUS;
 	}
 
-	@Override
+	
 	/**
 	 * Filter any extraneous distances returned by the sensor
 	 * 
