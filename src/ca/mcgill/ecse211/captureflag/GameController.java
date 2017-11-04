@@ -68,7 +68,7 @@ public class GameController extends Thread {
 	}
 	@SuppressWarnings("rawtypes")
 	public void run() {
-	  
+
 	  //obtain all game parameters from server and assign them to the appropriate variable
 	  try {
 	    Map data = conn.getData();
@@ -117,20 +117,18 @@ public class GameController extends Thread {
 
 	    // Wait until user decides to end program
 	    Button.waitForAnyPress();
-	    
-	    
-	    
-//		usPoller.start();
-//		us.localize();
-//		usPoller.killTask();
-//		
-//		Button.waitForAnyPress();
-//		
+//
 //		lp.start();
 //		li.cornerLocalization();
 //		lp.killTask();
+//		
+//		nav.travelTo(1, 1);
+//		nav.travelTo(0, 0);
+//		
+//		lp.restartTask();
+//		li.anyPointLocalization();
+//		lp.killTask();
 		
-		//nav.travelTo(1, 1);
 	}
 	
 }
