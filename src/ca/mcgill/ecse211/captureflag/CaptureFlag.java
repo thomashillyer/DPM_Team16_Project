@@ -1,5 +1,6 @@
 package ca.mcgill.ecse211.captureflag;
 
+import ca.mcgill.ecse211.WiFiClient.WifiConnection;
 import lejos.hardware.Button;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
@@ -45,6 +46,11 @@ public class CaptureFlag {
 	protected static final double BOT_LENGTH = 14.3;
 
 	protected static final double TILE_LENGTH = 30.48;
+	
+	private static final String SERVER_IP = "192.168.2.3";
+    private static final int TEAM_NUMBER = 1;
+    // Enable/disable printing of debug info from the WiFi class
+    private static final boolean ENABLE_DEBUG_WIFI_PRINT = true;
 
 	private static int x0 = 0;
 	private static int y0 = 0;
@@ -74,7 +80,8 @@ public class CaptureFlag {
 		UltrasonicLocalization usLocal = new UltrasonicLocalization(leftMotor, rightMotor, odometer);
 		UltrasonicPoller usPoller = new UltrasonicPoller(usSensor, usData, usLocal);
 		
-		
+		// Initialize WifiConnection class
+        WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
 		do {
 			printMenu();
 			option = Button.waitForAnyPress();
@@ -85,7 +92,7 @@ public class CaptureFlag {
 		int[] points = { x0, y0, xC, yC, corner };
 		LightLocalization lightLocal = new LightLocalization(leftMotor, rightMotor, odometer, nav);
 		LightPoller lp = new LightPoller(colorSensorValue, colorSensorData, lightLocal);
-		GameController gc = new GameController(lightLocal, usLocal, lp, usPoller, nav);
+		GameController gc = new GameController(lightLocal, usLocal, lp, usPoller, nav, conn);
 		
 		//TODO remove the switch case as it will not be used for the final project. Could maybe stay for testing purposes.
 		switch (option) {
