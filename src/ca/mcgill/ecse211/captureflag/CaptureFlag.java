@@ -92,7 +92,7 @@ public class CaptureFlag {
 		case Button.ID_LEFT:
 			odometer.start();
 //			usPoller.start();
-//			odoDispl.start();
+			odoDispl.start();
 //			screen.clear();
 //			usLocal.start();
 //			lightLocal.start();
@@ -129,34 +129,34 @@ public class CaptureFlag {
 		t.clear();
 		int counter = 0;
 
-		x0 = printXY("X0: ", 0, 0);
-		y0 = printXY("Y0: ", 0, 1);
-		xC = printXY("XC: ", 0, 2);
-		yC = printXY("YC: ", 0, 3);
+//		x0 = printXY("X0: ", 0, 0);
+//		y0 = printXY("Y0: ", 0, 1);
+//		xC = printXY("XC: ", 0, 2);
+//		yC = printXY("YC: ", 0, 3);
 
-		enter = false;
-		counter = 0;
-		t.drawString("Corner: ", 0, 4);
-		while (!enter) {
-			int buttonPressed = Button.waitForAnyPress();
-			if (buttonPressed != Button.ID_ENTER) {
-				if (buttonPressed == Button.ID_DOWN && counter == 0) {
-					counter = 0;
-				} else if (buttonPressed == Button.ID_DOWN && counter > 0) {
-					counter--;
-				} else if (buttonPressed == Button.ID_UP && counter == 3) {
-					counter = 3;
-				} else if (buttonPressed == Button.ID_UP && counter < 3) {
-					counter++;
-				}
-				t.drawInt(counter, 8, 4);
-			} else {
-				corner = counter;
-				enter = true;
-			}
-		}
-
-		t.clear(); // the screen at initialization
+//		enter = false;
+//		counter = 0;
+//		t.drawString("Corner: ", 0, 4);
+//		while (!enter) {
+//			int buttonPressed = Button.waitForAnyPress();
+//			if (buttonPressed != Button.ID_ENTER) {
+//				if (buttonPressed == Button.ID_DOWN && counter == 0) {
+//					counter = 0;
+//				} else if (buttonPressed == Button.ID_DOWN && counter > 0) {
+//					counter--;
+//				} else if (buttonPressed == Button.ID_UP && counter == 3) {
+//					counter = 3;
+//				} else if (buttonPressed == Button.ID_UP && counter < 3) {
+//					counter++;
+//				}
+//				t.drawInt(counter, 8, 4);
+//			} else {
+//				corner = counter;
+//				enter = true;
+//			}
+//		}
+//
+//		t.clear(); // the screen at initialization
 		t.drawString("left = fallingEdge", 0, 0);
 		t.drawString("right = risingEdge", 0, 1);
 	}

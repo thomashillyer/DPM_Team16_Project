@@ -23,17 +23,24 @@ public class GameController extends Thread {
 	}
 	
 	public void run() {
+		
 //		usPoller.start();
 //		us.localize();
 //		usPoller.killTask();
 //		
 //		Button.waitForAnyPress();
 //		
-//		lp.start();
-//		li.cornerLocalization();
-//		lp.killTask();
+		lp.start();
+		li.cornerLocalization();
+		lp.killTask();
 		
 		nav.travelTo(1, 1);
+		nav.travelTo(0, 0);
+		
+		lp.restartTask();
+		li.anyPointLocalization();
+		lp.killTask();
+		
 	}
 	
 }

@@ -22,19 +22,21 @@ public class LightPoller extends Thread {
 	// polls light sensor
 	public void run() {
 		int value;
-		while (!kill) {
-			// fetching the values from the color sensor
-			cs.fetchSample(csData, 0);
-
-			// getting the value returned from the sensor, and multiply it by
-			// 1000 to scale
-			value = (int) (csData[0] * 1000);
-			li.processData(value);
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		while(true) {
+			while (!kill) {
+				// fetching the values from the color sensor
+				cs.fetchSample(csData, 0);
+	
+				// getting the value returned from the sensor, and multiply it by
+				// 1000 to scale
+				value = (int) (csData[0] * 1000);
+				li.processData(value);
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -44,6 +46,10 @@ public class LightPoller extends Thread {
 	 */
 	protected void killTask() {
 		kill = true;
+	}
+	
+	protected void restartTask() {
+		kill = false;
 	}
 
 }

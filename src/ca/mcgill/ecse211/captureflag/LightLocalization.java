@@ -1,5 +1,7 @@
 package ca.mcgill.ecse211.captureflag;
 
+import java.util.Arrays;
+
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
@@ -43,6 +45,9 @@ public class LightLocalization {
 	
 	private boolean detectSingleLine = false;
 	private boolean detectFourLines = false;
+	private boolean cornerLocalization = false;
+	
+	private double[] lines = new double[4];
 
 	/**
 	 * The constructor for LightLocalization class.
@@ -81,21 +86,24 @@ public class LightLocalization {
 			Sound.beep();
 			if(detectFourLines) {
 				lineCounter++;
-
+				
+				if(lineCounter-1 < 4)
+					lines[lineCounter-1] = odometer.getTheta();
+				
 				if (lineCounter == 1) {
-					System.out.println(1 + " odo: " + odometer.getTheta());
+//					System.out.println(1 + " odo: " + odometer.getTheta());
 					xminus = odometer.getTheta();
 
 				} else if (lineCounter == 2) {
-					System.out.println(2+ " odo: " + odometer.getTheta());
+//					System.out.println(2+ " odo: " + odometer.getTheta());
 					yplus = odometer.getTheta();
 
 				} else if (lineCounter == 3) {
-					System.out.println(3+ " odo: " + odometer.getTheta());
+//					System.out.println(3+ " odo: " + odometer.getTheta());
 					xplus = odometer.getTheta();
 
 				} else if (lineCounter == 4) {
-					System.out.println(4+ " odo: " + odometer.getTheta());
+//					System.out.println(4+ " odo: " + odometer.getTheta());
 					yminus = odometer.getTheta();
 				}
 			}else if(detectSingleLine) {
@@ -121,6 +129,7 @@ public class LightLocalization {
 	 */
 	protected void cornerLocalization() {
 		detectSingleLine = true;
+		cornerLocalization = true;
 		// Set the acceleration of both motor
 		leftMotor.stop();
 		leftMotor.setAcceleration(CaptureFlag.ACCELERATION);
@@ -145,52 +154,26 @@ public class LightLocalization {
 		
 		correctOdometer();
 		nav.travelTo(0, 0);
-		nav.turnTo(-(odometer.getTheta() + (8 * Math.PI / 180)));
+		nav.turnTo(-(odometer.getTheta() + (4 * Math.PI / 180)));
 		
+		odometer.setX(0);
+		odometer.setY(0);
+		cornerLocalization = false;
 		//TODO set odometer based on corner passed in from server
 	}
 
-	//private void secondLocalization() {
-//		double theta = odometer.getTheta();
-//		lineCounter = 0;
-//
-//		// fetching the values from the color sensor
-//		colorSensorValue.fetchSample(colorSensorData, 0);
-//
-//		// getting the value returned from the sensor, and multiply it by
-//		// 1000 to scale
-//		float value = colorSensorData[0] * 1000;
-//
-//		// computing the derivative at each point
-//		float diff = value - oldValue;
-//
-//		// storing the current value, to be able to get the derivative on
-//		// the next iteration
-//		oldValue = value;
-//		if (diff < derivativeThreshold && filterCounter == 0) {
-//			Sound.beep();
-//			filterCounter++;
-//			lineCounter++;
-//
-//			if (lineCounter == 1) {
-//				yminus = odometer.getTheta();
-//
-//			} else if (lineCounter == 2) {
-//				xminus = odometer.getTheta();
-//
-//			} else if (lineCounter == 3) {
-//				yplus = odometer.getTheta();
-//
-//			} else if (lineCounter == 4) {
-//				xplus = odometer.getTheta();
-//			}
-//
-//		} else if (diff < derivativeThreshold && filterCounter > 0) {
-//			filterCounter++;
-//		} else if (diff > derivativeThreshold) {
-//			filterCounter = 0;
-//		}
-//	}
+	protected void anyPointLocalization() {
+		lineCounter = 0;
+		detectFourLines = true;
+		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true);
+		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), false);
+		detectFourLines = false;
+		
+		correctOdometer();
+		Button.waitForAnyPress();
+		nav.travelTo(0, 0);
+		nav.turnTo(-(odometer.getTheta() + (4 * Math.PI / 180)));
+	}
 
 	/**
 	 * This method calculates the robot's actual x and y position using the angle
@@ -200,20 +183,35 @@ public class LightLocalization {
 	 * to travel to the inputed destination.
 	 */
 	private void correctOdometer() {
-		System.out.println("X- : " + xminus);
-		System.out.println("Y- : " + yminus);
-		System.out.println("X+ : " + xplus);
-		System.out.println("Y+ : " + yplus);
+//		System.out.println("X- : " + xminus);
+//		System.out.println("Y- : " + yminus);
+//		System.out.println("X+ : " + xplus);
+//		System.out.println("Y+ : " + yplus);
 		
-		thetay = yminus - yplus;
-		thetax = xplus - xminus;
-
+		Arrays.sort(lines);
+////		System.out.println("the sorted array:");
+//		for(double d : lines) {
+//			System.out.println(d);
+//		}
+		
+		double theta = lines[0] * 180/Math.PI;
+		
+		if(theta >= 0 && theta < 20) {
+			thetay = lines[0] - lines[2];
+			thetax = lines[3] - lines[1];
+		} else {
+			thetay = lines[3] - lines[1];
+			thetax = lines[2] - lines[0];
+		}
+		
 		this.x = -CaptureFlag.BOT_LENGTH * Math.cos(thetay / 2.0);
 		this.y = -CaptureFlag.BOT_LENGTH * Math.cos(thetax / 2.0);
 		deltaThetaY = (Math.PI / 2.0) - yminus + Math.PI + (thetay / 2.0);
-
-		odometer.setX(this.x);
-		odometer.setY(this.y);
+		
+		if(cornerLocalization) {
+			odometer.setX(this.x);
+			odometer.setY(this.y);
+		}
 		odometer.setTheta(odometer.getTheta() + deltaThetaY);
 
 	}
