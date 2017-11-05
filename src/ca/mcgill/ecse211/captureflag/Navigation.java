@@ -8,9 +8,6 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 public class Navigation extends Thread {
 
-	private static final int FORWARD_SPEED = 150;
-	private static final int ROTATE_SPEED = 50;
-
 	private double currX = 0.0;
 	private double currY = 0.0;
 	private double currTheta = 0.0;
@@ -74,9 +71,11 @@ public class Navigation extends Thread {
 		double distToTravel = Math.pow(deltaX, 2) + Math.pow(deltaY, 2);
 		distToTravel = Math.sqrt(distToTravel);
 
+		leftMotor.setAcceleration(CaptureFlag.ACCELERATION); //added
+        rightMotor.setAcceleration(CaptureFlag.ACCELERATION); //added
 		// travel to the next point, and don't wait until the action is
 		// complete. So the boolean in both rotate method should be true
-		leftMotor.setSpeed(CaptureFlag.FORWARDSPEED);
+		leftMotor.setSpeed(CaptureFlag.FORWARDSPEED-1);
 		rightMotor.setSpeed(CaptureFlag.FORWARDSPEED);
 
 		rightMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, distToTravel), true);

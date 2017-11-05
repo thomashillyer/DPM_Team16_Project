@@ -36,9 +36,10 @@ public class CaptureFlag {
 	protected static final double TRACK = 14.8;
 
 	protected static final int ROTATIONSPEED = 100;
-	protected static final int ACCELERATION = 1000;
+	protected static final int ACCELERATION = 500; //1000
 	protected static final int NAV_ACCELERATION = 100;
 	protected static final int FORWARDSPEED = 150;
+	
 
 	private static final int FILTER_OUT = 23;
 	private static int filterControl;

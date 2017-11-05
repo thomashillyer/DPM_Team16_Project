@@ -25,7 +25,7 @@ public class LightLocalization {
 	//data
 	private int filterCounter = 0;
 	private float oldValue = 0;
-	private int derivativeThreshold = -30;
+	private int derivativeThreshold = -50; //-30
 	private int lineCounter = 0;
 	private double xminus, xplus, yminus, yplus;
 	private double thetax, thetay;
@@ -154,7 +154,7 @@ public class LightLocalization {
 		
 		correctOdometer();
 		nav.travelTo(0, 0);
-		nav.turnTo(-(odometer.getTheta() + (4 * Math.PI / 180)));
+		nav.turnTo(-(odometer.getTheta() + (4 * Math.PI / 180))); 
 		
 		odometer.setX(0);
 		odometer.setY(0);
@@ -170,8 +170,9 @@ public class LightLocalization {
 		detectFourLines = false;
 		
 		correctOdometer();
+		
 		Button.waitForAnyPress();
-		nav.travelTo(0, 0);
+		nav.travelTo(0, 0); //needs to get input somehow of the new coordinate not just origin 
 		nav.turnTo(-(odometer.getTheta() + (4 * Math.PI / 180)));
 	}
 
@@ -197,8 +198,8 @@ public class LightLocalization {
 		double theta = lines[0] * 180/Math.PI;
 		
 		if(theta >= 0 && theta < 20) {
-			thetay = lines[0] - lines[2];
-			thetax = lines[3] - lines[1];
+			thetay = lines[0] - lines[2]; //xminus - xplus
+			thetax = lines[3] - lines[1]; //yminus - yplus
 		} else {
 			thetay = lines[3] - lines[1];
 			thetax = lines[2] - lines[0];
