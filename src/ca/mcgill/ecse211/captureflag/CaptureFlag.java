@@ -9,6 +9,7 @@ import lejos.hardware.port.Port;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.SensorModes;
+import lejos.robotics.RegulatedMotorListener;
 import lejos.robotics.SampleProvider;
 
 /**
@@ -35,7 +36,7 @@ public class CaptureFlag {
 	protected static final double TRACK = 14.8;
 
 	protected static final int ROTATIONSPEED = 100;
-	protected static final int ACCELERATION = 1000;
+	protected static final int ACCELERATION = 500;
 	protected static final int NAV_ACCELERATION = 100;
 	protected static final int FORWARDSPEED = 150;
 
@@ -92,7 +93,7 @@ public class CaptureFlag {
 		case Button.ID_LEFT:
 			odometer.start();
 //			usPoller.start();
-			odoDispl.start();
+		//	odoDispl.start();
 //			screen.clear();
 //			usLocal.start();
 //			lightLocal.start();

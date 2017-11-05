@@ -74,7 +74,7 @@ public class OdometryDisplay extends Thread {
 	 * @param places number of decimal places the double should be displayed up to
 	 * @return the converted string 
 	 */
-	private static String formattedDoubleToString(double x, int places) {
+	protected static String formattedDoubleToString(double x, int places) {
 		String result = "";
 		String stack = "";
 		long t;

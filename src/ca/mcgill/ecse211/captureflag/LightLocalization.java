@@ -25,7 +25,7 @@ public class LightLocalization {
 	//data
 	private int filterCounter = 0;
 	private float oldValue = 0;
-	private int derivativeThreshold = -30;
+	private int derivativeThreshold = -50;
 	private int lineCounter = 0;
 	private double xminus, xplus, yminus, yplus;
 	private double thetax, thetay;
@@ -154,7 +154,7 @@ public class LightLocalization {
 		
 		correctOdometer();
 		nav.travelTo(0, 0);
-		nav.turnTo(-(odometer.getTheta() + (4 * Math.PI / 180)));
+		nav.turnTo(-(odometer.getTheta()));
 		
 		odometer.setX(0);
 		odometer.setY(0);
@@ -172,7 +172,7 @@ public class LightLocalization {
 		correctOdometer();
 		Button.waitForAnyPress();
 		nav.travelTo(0, 0);
-		nav.turnTo(-(odometer.getTheta() + (4 * Math.PI / 180)));
+		nav.turnTo(-(odometer.getTheta()));
 	}
 
 	/**
@@ -195,8 +195,13 @@ public class LightLocalization {
 //		}
 		
 		double theta = lines[0] * 180/Math.PI;
+		System.out.println("Lines: ");
+		for(double d : lines) {
+			System.out.println(OdometryDisplay.formattedDoubleToString(d, 4));
+		}
 		
-		if(theta >= 0 && theta < 20) {
+		if(theta >= 0 && theta < 40) {
+			System.out.println("In the if statement");
 			thetay = lines[0] - lines[2];
 			thetax = lines[3] - lines[1];
 		} else {
@@ -206,10 +211,18 @@ public class LightLocalization {
 		
 		this.x = -CaptureFlag.BOT_LENGTH * Math.cos(thetay / 2.0);
 		this.y = -CaptureFlag.BOT_LENGTH * Math.cos(thetax / 2.0);
-		deltaThetaY = (Math.PI / 2.0) - yminus + Math.PI + (thetay / 2.0);
+		
+		if(theta >= 0 && theta < 40) {
+			deltaThetaY = (Math.PI / 2.0) - lines[0] + Math.PI + (thetay / 2.0);
+		}else {
+			deltaThetaY = (Math.PI / 2.0) - lines[3] + Math.PI + (thetay / 2.0);
+		}
 		
 		if(cornerLocalization) {
 			odometer.setX(this.x);
+			odometer.setY(this.y);
+		} else {
+			odometer.setX(-this.x);
 			odometer.setY(this.y);
 		}
 		odometer.setTheta(odometer.getTheta() + deltaThetaY);
