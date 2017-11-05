@@ -26,6 +26,7 @@ public class LightLocalization {
 	private int filterCounter = 0;
 	private float oldValue = 0;
 	private int derivativeThreshold = -50;
+
 	private int lineCounter = 0;
 	private double xminus, xplus, yminus, yplus;
 	private double thetax, thetay;
@@ -170,9 +171,12 @@ public class LightLocalization {
 		detectFourLines = false;
 		
 		correctOdometer();
+		
 		Button.waitForAnyPress();
+
 		nav.travelTo(0, 0);
 		nav.turnTo(-(odometer.getTheta()));
+
 	}
 
 	/**
