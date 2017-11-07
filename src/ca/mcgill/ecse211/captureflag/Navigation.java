@@ -56,8 +56,8 @@ public class Navigation extends Thread {
 
 		// calculating the information needed (destination - current) for both y
 		// and x, in order to calculate the minimum angle using arctan
-		double deltaX = (x * CaptureFlag.TILE_LENGTH) - currX;
-		double deltaY = (y * CaptureFlag.TILE_LENGTH) - currY;
+		double deltaX = (x) - currX;
+		double deltaY = (y) - currY;
 
 		// calculating the minimum angle using Math.atan2 method
 		double deltaTheta = Math.atan2(deltaX, deltaY) - currTheta;

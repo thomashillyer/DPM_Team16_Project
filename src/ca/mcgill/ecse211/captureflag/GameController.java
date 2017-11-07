@@ -15,6 +15,7 @@ public class GameController extends Thread {
 	private UltrasonicPoller usPoller;
 	private Navigation nav;
 	private WifiConnection conn;
+	private FlagDetection flag;
 	
 	//all game variables
 	int redTeam;   //team number starting from red
@@ -58,13 +59,14 @@ public class GameController extends Thread {
     
     
 	//constructor
-	public GameController(LightLocalization li, UltrasonicLocalization us, LightPoller lp, UltrasonicPoller usPoller, Navigation nav, WifiConnection conn) {
+	public GameController(LightLocalization li, UltrasonicLocalization us, LightPoller lp, UltrasonicPoller usPoller, Navigation nav, WifiConnection conn, FlagDetection flag) {
 		this.li = li;
 		this.us = us;
 		this.lp = lp;
 		this.usPoller = usPoller;
 		this.nav = nav;
 		this.conn = conn;
+		this.flag = flag;
 	}
 	@SuppressWarnings("rawtypes")
 	public void run() {
@@ -114,26 +116,25 @@ public class GameController extends Thread {
 //	  }catch (Exception e) {
 //	      System.err.println("Error: " + e.getMessage());
 //	    }
-//
-//	    // Wait until user decides to end program
-//	    Button.waitForAnyPress();
-//
-		lp.start();
-		li.cornerLocalization();
-		Button.waitForAnyPress();
-		lp.killTask();
-		
-		nav.travelTo(1, 1);
-		Button.waitForAnyPress();
-		
-		nav.travelTo(0, 2);
-		Button.waitForAnyPress();
-		
-    	nav.travelTo(0, 0);
+
+//		lp.start();
+//		li.cornerLocalization();
+//		Button.waitForAnyPress();
+//		lp.killTask();
+//		
+//		nav.travelTo(1, 1);
+//		Button.waitForAnyPress();
+//		
+//		nav.travelTo(0, 2);
+//		Button.waitForAnyPress();
+//		
+//    	nav.travelTo(0, 0);
 		
 		//lp.restartTask();
 		//li.anyPointLocalization();
 		//lp.killTask();
+	  usPoller.start();
+	  flag.findFlag();
 		
 	}
 	
