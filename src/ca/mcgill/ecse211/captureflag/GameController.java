@@ -3,18 +3,29 @@ package ca.mcgill.ecse211.captureflag;
 import java.util.Map;
 import ca.mcgill.ecse211.WiFiClient.WifiConnection;
 import lejos.hardware.Button;
+import lejos.hardware.ev3.LocalEV3;
+import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.hardware.motor.EV3MediumRegulatedMotor;
+import lejos.robotics.RegulatedMotor;
 
 /**
  * This class will implement the overall game logic that will follow according to our software flowchart
  */
 public class GameController extends Thread {
 	
+    protected static EV3LargeRegulatedMotor leftMotor;
+    protected static EV3LargeRegulatedMotor rightMotor;
+    private static EV3MediumRegulatedMotor zip;
+  
 	private LightLocalization li;
 	private UltrasonicLocalization us;
 	private LightPoller lp;
 	private UltrasonicPoller usPoller;
 	private Navigation nav;
 	private WifiConnection conn;
+	private Odometer odo;
+	
+//	private EV3LargeRegulatedMotor[] syncList = new EV3LargeRegulatedMotor[1];
 	
 	//all game variables
 	int redTeam;   //team number starting from red
@@ -58,13 +69,17 @@ public class GameController extends Thread {
     
     
 	//constructor
-	public GameController(LightLocalization li, UltrasonicLocalization us, LightPoller lp, UltrasonicPoller usPoller, Navigation nav, WifiConnection conn) {
+	public GameController(EV3LargeRegulatedMotor rightMotor, EV3LargeRegulatedMotor leftMotor, EV3MediumRegulatedMotor zip, Odometer odo, LightLocalization li, UltrasonicLocalization us, LightPoller lp, UltrasonicPoller usPoller, Navigation nav, WifiConnection conn) {
 		this.li = li;
 		this.us = us;
 		this.lp = lp;
 		this.usPoller = usPoller;
 		this.nav = nav;
 		this.conn = conn;
+		this.zip = zip;
+		this.odo = odo;
+		this.rightMotor = rightMotor;
+		this.leftMotor = leftMotor;
 	}
 	@SuppressWarnings("rawtypes")
 	public void run() {
@@ -117,23 +132,49 @@ public class GameController extends Thread {
 //
 //	    // Wait until user decides to end program
 //	    Button.waitForAnyPress();
-//
+	  
+	  
+//	  nav.turnTo(1,0);
+//	  Button.waitForAnyPress();
+////	  nav.turnTo(0);
+//	  //Button.waitForAnyPress();
+//	  nav.turnTo(1,1);
+//	  Button.waitForAnyPress();
+//	  nav.turnTo(0,1);
+//	  Button.waitForAnyPress();
+//	  nav.turnTo(1,1);
+//-----------
 		lp.start();
 		li.cornerLocalization();
 		Button.waitForAnyPress();
 		lp.killTask();
-		
-		nav.travelTo(1, 1);
-		Button.waitForAnyPress();
-		
+
+		nav.travelTo(1,1);
+		lp.restartTask();
+        li.anyPointLocalization();
+        lp.killTask();
+        
+        odo.setX(1*CaptureFlag.TILE_LENGTH);
+        odo.setY(1*CaptureFlag.TILE_LENGTH);
+        
 		nav.travelTo(0, 2);
-		Button.waitForAnyPress();
-		
-    	nav.travelTo(0, 0);
-		
-		//lp.restartTask();
-		//li.anyPointLocalization();
-		//lp.killTask();
+		  lp.restartTask();
+	        li.anyPointLocalization();
+	        lp.killTask();
+//--------------------------
+	        
+	        
+	        
+//    	rightMotor.forward();
+//    	leftMotor.forward();
+//    	zip.setSpeed(150);
+//    	zip.forward();
+//		leftMotor.rotate(CaptureFlag.convertDistance( CaptureFlag.WHEEL_RADIUS, 8), true);
+//	    rightMotor.rotate(CaptureFlag.convertDistance( CaptureFlag.WHEEL_RADIUS, 8), false);
+//		lp.restartTask();
+//		li.anyPointLocalization();
+//		lp.killTask();
+//		rightMotor.endSynchronization();
 		
 	}
 	

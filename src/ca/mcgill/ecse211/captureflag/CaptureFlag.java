@@ -95,14 +95,14 @@ public class CaptureFlag {
 		int[] points = { x0, y0, xC, yC, corner };
 		LightLocalization lightLocal = new LightLocalization(leftMotor, rightMotor, odometer, nav);
 		LightPoller lp = new LightPoller(colorSensorValue, colorSensorData, lightLocal);
-		GameController gc = new GameController(lightLocal, usLocal, lp, usPoller, nav, conn);
+		GameController gc = new GameController(rightMotor, leftMotor, sensorMotor, odometer,lightLocal, usLocal, lp, usPoller, nav, conn);
 		
 		//TODO remove the switch case as it will not be used for the final project. Could maybe stay for testing purposes.
 		switch (option) {
 		case Button.ID_LEFT:
 			odometer.start();
 //			usPoller.start();
-		//	odoDispl.start();
+			odoDispl.start();
 //			screen.clear();
 //			usLocal.start();
 //			lightLocal.start();

@@ -14,6 +14,8 @@ public class Navigation extends Thread {
 
 	private Odometer odometer;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
+	
+//	private EV3LargeRegulatedMotor[] syncList = new EV3LargeRegulatedMotor[1];
 
 	/**
 	 * This is the constructor for the Navigation class.
@@ -25,11 +27,13 @@ public class Navigation extends Thread {
 		this.odometer = odometer;
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
+//		syncList[0] = leftMotor; 
+//		rightMotor.synchronizeWith(syncList);
 	}
 
 	public void run() {
-		leftMotor.stop(true);
-		rightMotor.stop(true);
+//		leftMotor.stop(true);
+//		rightMotor.stop(true);
 
 	}
 
@@ -48,22 +52,21 @@ public class Navigation extends Thread {
 
 	public void travelTo(double x, double y) {
 
-		// get the current position and rotation of the robot, based on its
-		// starting point
-		currX = odometer.getX();
-		currY = odometer.getY();
-		currTheta = odometer.getTheta();
 
-		// calculating the information needed (destination - current) for both y
-		// and x, in order to calculate the minimum angle using arctan
-		double deltaX = (x * CaptureFlag.TILE_LENGTH) - currX;
-		double deltaY = (y * CaptureFlag.TILE_LENGTH) - currY;
+      currX = odometer.getX();
+      currY = odometer.getY();
+      currTheta = odometer.getTheta();
 
-		// calculating the minimum angle using Math.atan2 method
-		double deltaTheta = Math.atan2(deltaX, deltaY) - currTheta;
+      // calculating the information needed (destination - current) for both y
+      // and x, in order to calculate the minimum angle using arctan
+      double deltaX = (x * CaptureFlag.TILE_LENGTH) - currX;
+      double deltaY = (y * CaptureFlag.TILE_LENGTH) - currY;
+
+//      // calculating the minimum angle using Math.atan2 method
+//      double theta = Math.atan2(deltaX, deltaY) - currTheta;
 
 		// rotate the robot towards its new way point
-		turnTo(deltaTheta);
+		turnTo(x, y);
 
 		// calculate the distance to next point using the built in pythagore
 		// theorem
@@ -71,19 +74,23 @@ public class Navigation extends Thread {
 		double distToTravel = Math.pow(deltaX, 2) + Math.pow(deltaY, 2);
 		distToTravel = Math.sqrt(distToTravel);
 
-		leftMotor.setAcceleration(CaptureFlag.ACCELERATION); //added
-        rightMotor.setAcceleration(CaptureFlag.ACCELERATION); //added
 		// travel to the next point, and don't wait until the action is
 		// complete. So the boolean in both rotate method should be true
+		
 		leftMotor.setSpeed(CaptureFlag.FORWARDSPEED-1);
 		rightMotor.setSpeed(CaptureFlag.FORWARDSPEED);
-
+		
+		
+//		rightMotor.startSynchronization();
 		rightMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, distToTravel), true);
 		leftMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, distToTravel), false);
-
-		leftMotor.stop(true);
-		rightMotor.stop(true);
-
+//		rightMotor.endSynchronization();
+		
+//		rightMotor.startSynchronization();
+//		leftMotor.stop(true);
+//		rightMotor.stop(true);
+	
+//		rightMotor.endSynchronization();
 	}
 
 	/**
@@ -98,30 +105,53 @@ public class Navigation extends Thread {
 	 * @param theta
 	 *            The angle by which the cart should turn.
 	 */
-	public void turnTo(double theta) {
-		leftMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
-		rightMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
+	public void turnTo(double x, double y) {
+	  
+	  
+	// get the current position and rotation of the robot, based on its
+      // starting point
+   
+      currX = odometer.getX();
+      currY = odometer.getY();
+      currTheta = odometer.getTheta();
 
-		// adjusting the angle in order to have an optimal turn (a turn with the
-		// minimum angle)
-		if (theta <= -Math.PI) {
-			theta += Math.PI * 2;
-		} else if (theta > Math.PI) {
-			theta -= Math.PI * 2;
-		}
+      // calculating the information needed (destination - current) for both y
+      // and x, in order to calculate the minimum angle using arctan
+      double deltaX = (x * CaptureFlag.TILE_LENGTH) - currX;
+      double deltaY = (y * CaptureFlag.TILE_LENGTH) - currY;
 
-		theta = theta * 180.0 / Math.PI;
+      // calculating the minimum angle using Math.atan2 method
+      double theta = Math.atan2(deltaX, deltaY) - currTheta;
+//	  rightMotor.synchronizeWith(syncList);
+//      rightMotor.startSynchronization();
+      
+      turn(theta);
+	}
+	
+	protected void turn(double theta) {
+	  leftMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
+      rightMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
 
-		// turn to the left if angle is negative
-		if (theta < 0) {
-			leftMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -theta), true);//+2
-			rightMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -theta), false);
-		}
-		// turn to the right if angle is positive
-		else {
-			leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, theta), true);//-2
-			rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, theta), false);
-		}
+      // adjusting the angle in order to have an optimal turn (a turn with the
+      // minimum angle)
+      if (theta <= -Math.PI) {
+          theta += Math.PI * 2;
+      } else if (theta > Math.PI) {
+          theta -= Math.PI * 2;
+      }
 
+      theta = theta * 180.0 / Math.PI;
+
+      // turn to the left if angle is negative
+      if (theta < 0) {
+          leftMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -theta+2), true);//+2
+          rightMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -theta+2), false);
+      }
+      // turn to the right if angle is positive
+      else {
+          leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, theta-2), true);//-2
+          rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, theta-2), false);
+      }
+//    rightMotor.endSynchronization();
 	}
 }

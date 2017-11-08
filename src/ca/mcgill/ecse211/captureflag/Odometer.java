@@ -78,16 +78,16 @@ public class Odometer extends Thread {
 	
 				// this ensures that the odometer only runs once every period
 				updateEnd = System.currentTimeMillis();
-				if (updateEnd - updateStart < ODOMETER_PERIOD) {
+				//if (updateEnd - updateStart < ODOMETER_PERIOD) {
 					try {
-						Thread.sleep(ODOMETER_PERIOD - (updateEnd - updateStart));
+						Thread.sleep(10);
 					} catch (InterruptedException e) {
 						// there is nothing to be done here because it is not
 						// expected that the odometer will be interrupted by
 						// another thread
 					}
 				}
-			}
+			//}
 		}
 	}
 
