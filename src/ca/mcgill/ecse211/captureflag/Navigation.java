@@ -52,7 +52,6 @@ public class Navigation extends Thread {
 
 	public void travelTo(double x, double y) {
 
-
       currX = odometer.getX();
       currY = odometer.getY();
       currTheta = odometer.getTheta();

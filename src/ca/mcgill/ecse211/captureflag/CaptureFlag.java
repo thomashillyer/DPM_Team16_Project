@@ -50,7 +50,7 @@ public class CaptureFlag {
 
 	protected static final double TILE_LENGTH = 30.48;
 	
-	private static final String SERVER_IP = "192.168.2.3";
+	private static final String SERVER_IP = "192.168.2.37";
     private static final int TEAM_NUMBER = 1;
     // Enable/disable printing of debug info from the WiFi class
     private static final boolean ENABLE_DEBUG_WIFI_PRINT = true;
@@ -81,8 +81,8 @@ public class CaptureFlag {
 		OdometryDisplay odoDispl = new OdometryDisplay(odometer, screen);
 		Navigation nav = new Navigation(odometer, leftMotor, rightMotor);
 		UltrasonicLocalization usLocal = new UltrasonicLocalization(leftMotor, rightMotor, odometer);
-		UltrasonicPoller usPoller = new UltrasonicPoller(usSensor, usData, usLocal);
-		
+		FlagDetection flag = new FlagDetection(leftMotor, rightMotor, odometer, nav, 0, 0, 1);
+		UltrasonicPoller usPoller = new UltrasonicPoller(usSensor, usData, usLocal, flag);
 		// Initialize WifiConnection class
         WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
 		do {
@@ -95,7 +95,8 @@ public class CaptureFlag {
 		int[] points = { x0, y0, xC, yC, corner };
 		LightLocalization lightLocal = new LightLocalization(leftMotor, rightMotor, odometer, nav);
 		LightPoller lp = new LightPoller(colorSensorValue, colorSensorData, lightLocal);
-		GameController gc = new GameController(rightMotor, leftMotor, sensorMotor, odometer,lightLocal, usLocal, lp, usPoller, nav, conn);
+
+		GameController gc = new GameController(rightMotor, leftMotor, sensorMotor, odometer,lightLocal, usLocal, lp, usPoller, nav, conn, flag);
 		
 		//TODO remove the switch case as it will not be used for the final project. Could maybe stay for testing purposes.
 		switch (option) {
@@ -106,9 +107,9 @@ public class CaptureFlag {
 //			screen.clear();
 //			usLocal.start();
 //			lightLocal.start();
-			t.clear();
 //			lp.start();
 			gc.start();
+			t.clear();
 			break;
 		case Button.ID_RIGHT:
 //			UltrasonicPoller usPoll = new UltrasonicPoller(usSensor, usData, usLocal);
@@ -204,6 +205,29 @@ public class CaptureFlag {
 		}
 		return counter;
 	}
+	
+	/**
+	 * 
+	 * @param distance A distance collected from sampling the ultrasonic sensor.
+	 * @return A filtered value
+	 */
+	protected static int filter(int distance) {
+		  if (distance >= 255  && filterControl < FILTER_OUT) {
+		      // bad value, do not set the distance var, however do increment the
+		      // filter value
+		      filterControl++;
+		      return distance;
+		    } else if (distance >= 255) {
+		      // We have repeated large values, so there must actually be nothing
+		      // there: leave the distance alone
+		      return distance;
+		    } else {
+		      // distance went below 255: reset filter and leave
+		      // distance alone.
+		      filterControl = 0;
+		      return distance;
+		    }
+	  }
 
 	/**
 	 * This method converts a distance into a number of rotations the motor should complete to go the distance.

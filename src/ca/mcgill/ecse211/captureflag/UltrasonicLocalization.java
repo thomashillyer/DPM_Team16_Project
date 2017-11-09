@@ -26,8 +26,12 @@ public class UltrasonicLocalization{
 	private Odometer odometer;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
 
+	private Object lock = new Object();
+	
+	private volatile boolean isLocalizing = false;
+	
 	private boolean fallingEdgeDetected = false;
-
+	
 	/**
 	 * The constructor for the UltrasonicLocalization class
 	 * @param leftMotor An instance of the EV3LargeRegulatedMotor that controls the left motor.
@@ -55,7 +59,11 @@ public class UltrasonicLocalization{
 	 * face north (0 degrees)
 	 */
 	protected void localize() {
-
+		synchronized (lock) {
+			isLocalizing = true;
+		}
+		
+		
 		leftMotor.stop();
 		leftMotor.setAcceleration(CaptureFlag.ACCELERATION);
 		rightMotor.stop();
@@ -108,6 +116,9 @@ public class UltrasonicLocalization{
 		rightMotor.rotate(
 				CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, deltaTheta * 180 / Math.PI), false);
 
+		synchronized (lock) {
+			isLocalizing = true;
+		}
 	}
 
 	public int readUSDistance() {
@@ -147,5 +158,13 @@ public class UltrasonicLocalization{
 
 			}
 		}
+	}
+	
+	protected boolean isLocalizing() {
+		boolean result;
+		synchronized (lock) {
+			result = this.isLocalizing;
+		}
+		return result;
 	}
 }

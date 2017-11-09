@@ -26,6 +26,9 @@ public class GameController extends Thread {
 	private Odometer odo;
 	
 //	private EV3LargeRegulatedMotor[] syncList = new EV3LargeRegulatedMotor[1];
+
+	private FlagDetection flag;
+
 	
 	//all game variables
 	int redTeam;   //team number starting from red
@@ -69,17 +72,21 @@ public class GameController extends Thread {
     
     
 	//constructor
-	public GameController(EV3LargeRegulatedMotor rightMotor, EV3LargeRegulatedMotor leftMotor, EV3MediumRegulatedMotor zip, Odometer odo, LightLocalization li, UltrasonicLocalization us, LightPoller lp, UltrasonicPoller usPoller, Navigation nav, WifiConnection conn) {
+	public GameController(EV3LargeRegulatedMotor rightMotor, EV3LargeRegulatedMotor leftMotor, EV3MediumRegulatedMotor zip, Odometer odo, LightLocalization li, 
+	    UltrasonicLocalization us, LightPoller lp, UltrasonicPoller usPoller, Navigation nav, WifiConnection conn,FlagDetection flag) {
 		this.li = li;
 		this.us = us;
 		this.lp = lp;
 		this.usPoller = usPoller;
 		this.nav = nav;
 		this.conn = conn;
+
 		this.zip = zip;
 		this.odo = odo;
 		this.rightMotor = rightMotor;
 		this.leftMotor = leftMotor;
+		this.flag = flag;
+
 	}
 	@SuppressWarnings("rawtypes")
 	public void run() {
@@ -129,6 +136,7 @@ public class GameController extends Thread {
 //	  }catch (Exception e) {
 //	      System.err.println("Error: " + e.getMessage());
 //	    }
+
 //
 //	    // Wait until user decides to end program
 //	    Button.waitForAnyPress();
@@ -174,8 +182,7 @@ public class GameController extends Thread {
 //		lp.restartTask();
 //		li.anyPointLocalization();
 //		lp.killTask();
-//		rightMotor.endSynchronization();
-		
+//		rightMotor.endSynchronization();		
 	}
 	
 }
