@@ -132,7 +132,7 @@ public class LightLocalization {
    * <li>Corrects the robots orientation</li>
    * </ol>
    */
-  protected void cornerLocalization() {
+  protected void cornerLocalization(int corner) {
   
     
     detectSingleLine = true;
@@ -164,8 +164,23 @@ public class LightLocalization {
     nav.travelTo(0, 0);
   nav.turn(-(odometer.getTheta()));
 
-    odometer.setX(0);
-    odometer.setY(0);
+  if(corner == 0) {
+		odometer.setX(CaptureFlag.TILE_LENGTH);
+		odometer.setY(CaptureFlag.TILE_LENGTH);
+		odometer.setTheta(0);
+	} else if(corner == 1) {
+		odometer.setX(7*CaptureFlag.TILE_LENGTH);
+		odometer.setY(CaptureFlag.TILE_LENGTH);
+		odometer.setTheta(3*Math.PI/2);
+	} else if(corner == 2) {
+		odometer.setX(7*CaptureFlag.TILE_LENGTH);
+		odometer.setY(7*CaptureFlag.TILE_LENGTH);
+		odometer.setTheta(Math.PI);
+	}else if(corner == 3) {
+		odometer.setX(1*CaptureFlag.TILE_LENGTH);
+		odometer.setY(7*CaptureFlag.TILE_LENGTH);
+		odometer.setTheta(Math.PI/2);
+	}
     cornerLocalization = false;
     //TODO set odometer based on corner passed in from server
 //    rightMotor.endSynchronization();
@@ -173,20 +188,6 @@ public class LightLocalization {
 
   protected void anyPointLocalization() {
 //    rightMotor.synchronizeWith(syncList);
-//    rightMotor.startSynchronization();
-    detectSingleLine = true;
-    while(detectSingleLine) {
-      leftMotor.forward();
-      rightMotor.forward();
-    }
-//    rightMotor.startSynchronization();
-//    leftMotor.stop(true);
-//    rightMotor.stop(true);
-//    rightMotor.endSynchronization();
-    // Move the robot backwards 1.5 * its center distance
-//    rightMotor.startSynchronization();
-    rightMotor.rotate(-CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, 1.15 * CaptureFlag.BOT_LENGTH), true);
-    leftMotor.rotate(-CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, 1.15 * CaptureFlag.BOT_LENGTH), false);
     
     lineCounter = 0;
     double incomeTheta = odometer.getTheta();

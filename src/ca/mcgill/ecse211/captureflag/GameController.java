@@ -17,6 +17,9 @@ public class GameController extends Thread {
     protected static EV3LargeRegulatedMotor rightMotor;
     private static EV3MediumRegulatedMotor zip;
   
+    
+    private int x0, y0, xC,yC, corner;
+    
 	private LightLocalization li;
 	private UltrasonicLocalization us;
 	private LightPoller lp;
@@ -73,7 +76,7 @@ public class GameController extends Thread {
     
 	//constructor
 	public GameController(EV3LargeRegulatedMotor rightMotor, EV3LargeRegulatedMotor leftMotor, EV3MediumRegulatedMotor zip, Odometer odo, LightLocalization li, 
-	    UltrasonicLocalization us, LightPoller lp, UltrasonicPoller usPoller, Navigation nav, WifiConnection conn,FlagDetection flag) {
+	    UltrasonicLocalization us, LightPoller lp, UltrasonicPoller usPoller, Navigation nav, WifiConnection conn,FlagDetection flag, int x0, int y0, int xC, int yC, int corner) {
 		this.li = li;
 		this.us = us;
 		this.lp = lp;
@@ -86,6 +89,11 @@ public class GameController extends Thread {
 		this.rightMotor = rightMotor;
 		this.leftMotor = leftMotor;
 		this.flag = flag;
+		this.x0 = x0;
+		this.y0 = y0;
+		this.xC = xC;
+		this.yC = yC;
+		this.corner = corner;
 
 	}
 	@SuppressWarnings("rawtypes")
@@ -141,6 +149,27 @@ public class GameController extends Thread {
 //	    // Wait until user decides to end program
 //	    Button.waitForAnyPress();
 	  
+//		lp.start();
+//		
+//		if(redTeam == CaptureFlag.TEAM_NUMBER) {
+//			li.cornerLocalization(redCorner);
+//			lp.killTask();
+//			//go to bridge
+//		} else if(greenTeam == CaptureFlag.TEAM_NUMBER) {
+//			li.cornerLocalization(greenCorner);
+//			lp.killTask();
+//			//they dont give ust the point in front of the zipline to relocalize
+//			//therefore the following might be wrong
+//			
+//			nav.travelTo(zo_g_x-1, zo_g_y );
+////			lp.restartTask();
+////	        li.anyPointLocalization();
+////	        lp.killTask();
+////	        
+////	        nav.travelTo(zc_g_x, zc_g_y );
+//		}
+		
+		
 	  
 //	  nav.turnTo(1,0);
 //	  Button.waitForAnyPress();
@@ -153,22 +182,25 @@ public class GameController extends Thread {
 //	  nav.turnTo(1,1);
 //-----------
 		lp.start();
-		li.cornerLocalization();
-		Button.waitForAnyPress();
+		li.cornerLocalization(corner);
 		lp.killTask();
+		
+		Button.waitForAnyPress();
 
-		nav.travelTo(1,1);
-		lp.restartTask();
-        li.anyPointLocalization();
-        lp.killTask();
-        
-        odo.setX(1*CaptureFlag.TILE_LENGTH);
-        odo.setY(1*CaptureFlag.TILE_LENGTH);
-        
-		nav.travelTo(0, 2);
-		  lp.restartTask();
-	        li.anyPointLocalization();
-	        lp.killTask();
+		nav.travelTo(x0,y0);
+//		
+		
+//		lp.restartTask();
+//        li.anyPointLocalization();
+//        lp.killTask();
+//        
+//        odo.setX(1*CaptureFlag.TILE_LENGTH);
+//        odo.setY(1*CaptureFlag.TILE_LENGTH);
+//        
+//		nav.travelTo(0, 2);
+//		  lp.restartTask();
+//	        li.anyPointLocalization();
+//	        lp.killTask();
 //--------------------------
 	        
 	        
