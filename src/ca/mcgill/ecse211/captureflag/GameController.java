@@ -14,7 +14,6 @@ import lejos.robotics.RegulatedMotor;
  */
 public class GameController extends Thread {
 
-
 	protected static EV3LargeRegulatedMotor leftMotor;
 	protected static EV3LargeRegulatedMotor rightMotor;
 	private static EV3MediumRegulatedMotor zip;
@@ -24,9 +23,8 @@ public class GameController extends Thread {
 	private LightPoller lp;
 	private UltrasonicPoller usPoller;
 	private Navigation nav;
-	static WifiConnection conn;
+	private static WifiConnection conn;
 	private Odometer odo;
-	private Wifi wifi;
 
 	// private EV3LargeRegulatedMotor[] syncList = new EV3LargeRegulatedMotor[1];
 
@@ -94,7 +92,7 @@ public class GameController extends Thread {
 	public void run() {
 		// directly updates the variables in GameController with the values from the
 		// server
-		wifi.updateDataPoints();
+		getDataFromServer();
 
 		//
 		// // Wait until user decides to end program
@@ -113,7 +111,7 @@ public class GameController extends Thread {
 		lp.start();
 		li.cornerLocalization(corner);
 		lp.killTask();
-		
+
 		Button.waitForAnyPress();
 		nav.travelTo(1, 1);
 		lp.restartTask();
@@ -141,6 +139,60 @@ public class GameController extends Thread {
 		// li.anyPointLocalization();
 		// lp.killTask();
 		// rightMotor.endSynchronization();
+	}
+
+	/**
+	 * Obtains all game parameters from the server and assigns them to the
+	 * appropriate variable. Game logic uses these variables to navigate to
+	 * waypoints.
+	 */
+	private void getDataFromServer() {
+		try {
+			Map data = conn.getData();
+
+			redTeam = ((Long) data.get("RedTeam")).intValue();
+			greenTeam = ((Long) data.get("GreenTeam")).intValue();
+			redCorner = ((Long) data.get("RedCorner")).intValue();
+			greenCorner = ((Long) data.get("GreenCorner")).intValue();
+			greenOpFlag = ((Long) data.get("OG")).intValue();
+			redOpFlag = ((Long) data.get("OR")).intValue();
+			red_ll_x = ((Long) data.get("Red_LL_x")).intValue();
+			red_ll_y = ((Long) data.get("Red_LL_y")).intValue();
+			red_ur_x = ((Long) data.get("Red_UR_x")).intValue();
+			red_ur_y = ((Long) data.get("Red_UR_y")).intValue();
+			green_ll_x = ((Long) data.get("Green_LL_x")).intValue();
+			green_ll_y = ((Long) data.get("Green_LL_y")).intValue();
+			green_ur_x = ((Long) data.get("Green_LL_x")).intValue();
+			green_ur_y = ((Long) data.get("Green_LL_y")).intValue();
+			zc_r_x = ((Long) data.get("ZC_R_x")).intValue();
+			zc_r_y = ((Long) data.get("ZC_R_y")).intValue();
+			zo_r_x = ((Long) data.get("ZO_R_x")).intValue();
+			zo_r_y = ((Long) data.get("ZO_R_y")).intValue();
+			zc_g_x = ((Long) data.get("ZC_G_x")).intValue();
+			zc_g_y = ((Long) data.get("ZC_G_y")).intValue();
+			zo_g_x = ((Long) data.get("ZO_G_x")).intValue();
+			zo_g_y = ((Long) data.get("ZO_G_y")).intValue();
+			sh_ll_x = ((Long) data.get("SH_LL_x")).intValue();
+			sh_ll_y = ((Long) data.get("SH_LL_y")).intValue();
+			sh_ur_x = ((Long) data.get("SH_UR_x")).intValue();
+			sh_ur_y = ((Long) data.get("SH_UR_y")).intValue();
+			sv_ll_x = ((Long) data.get("SV_LL_x")).intValue();
+			sv_ll_y = ((Long) data.get("SV_LL_y")).intValue();
+			sv_ur_x = ((Long) data.get("SV_UR_x")).intValue();
+			sv_ur_y = ((Long) data.get("SV_UR_y")).intValue();
+			sr_ll_x = ((Long) data.get("SR_LL_x")).intValue();
+			sr_ll_y = ((Long) data.get("SR_LL_y")).intValue();
+			sr_ur_x = ((Long) data.get("SR_UR_x")).intValue();
+			sr_ur_y = ((Long) data.get("SR_UR_y")).intValue();
+			sg_ll_x = ((Long) data.get("SG_LL_x")).intValue();
+			sg_ll_y = ((Long) data.get("SG_LL_y")).intValue();
+			sg_ur_x = ((Long) data.get("SG_UR_x")).intValue();
+			sg_ur_y = ((Long) data.get("SG_UR_y")).intValue();
+
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+		}
+
 	}
 
 }
