@@ -99,6 +99,45 @@ public class GameController extends Thread {
 		// directly updates the variables in GameController with the values from the
 		// server
 		getDataFromServer();
+		// --------Integration---------
+		//Ultrasonic localization
+		usPoller.start();
+		us.localize();
+		usPoller.killTask();
+		//End ultrasonic localization
+		//Light localization
+		lp.start();
+		li.cornerLocalization(corner);
+		lp.killTask();
+		//end light localization
+		//travel to ramp corresponding to starting zone
+		nav.travelTo(someX, someY);
+		//end travel
+		//localize at ramp
+		lp.restartTask();
+		li.anyPointLocalization();
+		lp.killTask();
+		odo.setX(someX * CaptureFlag.TILE_LENGTH);
+		odo.setY(someY * CaptureFlag.TILE_LENGTH);
+		//end localize at ramp
+		//traverse river (either zip or bridge)
+		//end traversal
+		//localize
+		lp.restartTask();
+		li.anyPointLocalization();
+		lp.killTask();
+		odo.setX(someX * CaptureFlag.TILE_LENGTH);
+		odo.setY(someY * CaptureFlag.TILE_LENGTH);
+		//end localize
+		//search for flag
+		flag_zone_x = 0;
+		flag_zone_y = 0;
+		calculateSearchRegionPoint();
+		nav.travelTo(flag_zone_x, flag_zone_y);
+		flag.findFlag(); // TODO needs a lot of work
+		//end search for flag
+		
+		// ------END Integration-------
 
 		//
 		// // Wait until user decides to end program
@@ -146,11 +185,6 @@ public class GameController extends Thread {
 		// lp.killTask();
 		// rightMotor.endSynchronization();
 
-		flag_zone_x = 0;
-		flag_zone_y = 0;
-		calculateSearchRegionPoint();
-		nav.travelTo(flag_zone_x, flag_zone_y);
-		flag.findFlag(); // TODO needs a lot of work
 	}
 
 	/**
