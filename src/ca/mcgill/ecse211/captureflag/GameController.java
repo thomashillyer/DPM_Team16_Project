@@ -73,6 +73,9 @@ public class GameController extends Thread {
 	static int sg_ur_x; // upper right hand corner of search region in green player zone x
 	static int sg_ur_y; // upper right hand corner of search region in green player zone y
 
+	int flag_zone_x; // calculated middle point of the search region x
+	int flag_zone_y; // calculated middle point of the search region y
+
 	// constructor
 	public GameController(EV3LargeRegulatedMotor rightMotor, EV3LargeRegulatedMotor leftMotor,
 			EV3MediumRegulatedMotor zip, Odometer odo, LightLocalization li, UltrasonicLocalization us, LightPoller lp,
@@ -143,8 +146,19 @@ public class GameController extends Thread {
 		// lp.killTask();
 		// rightMotor.endSynchronization();
 
-		int flag_zone_x = 0, flag_zone_y = 0;
-		if (/* red */true) {
+		flag_zone_x = 0;
+		flag_zone_y = 0;
+		calculateSearchRegionPoint();
+		nav.travelTo(flag_zone_x, flag_zone_y);
+		flag.findFlag(); // TODO needs a lot of work
+	}
+
+	/**
+	 * Calculate the middle point of the search region. Depends on whether red team
+	 * or green team and also the orientation of the search region.
+	 */
+	private void calculateSearchRegionPoint() {
+		if (/* red */true) {// TODO implement check for whether on red team or green team
 			// the search region is long in the x direction
 			if (Math.abs(sr_ll_x - sr_ur_x) == 2) {
 				flag_zone_x = (sr_ll_x + sr_ur_x) / 2;
@@ -200,8 +214,7 @@ public class GameController extends Thread {
 				}
 			}
 		}
-		nav.travelTo(flag_zone_x, flag_zone_y);
-		flag.findFlag(); //TODO needs a lot of work
+
 	}
 
 	/**

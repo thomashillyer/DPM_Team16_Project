@@ -3,7 +3,8 @@ package ca.mcgill.ecse211.captureflag;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 /**
- *The Navigation class implements the logic of moving from one point to another, using the shortest path.
+ * The Navigation class implements the logic of moving from one point to
+ * another, using the shortest path.
  */
 
 public class Navigation extends Thread {
@@ -14,26 +15,32 @@ public class Navigation extends Thread {
 
 	private Odometer odometer;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
-	
-//	private EV3LargeRegulatedMotor[] syncList = new EV3LargeRegulatedMotor[1];
+
+	// private EV3LargeRegulatedMotor[] syncList = new EV3LargeRegulatedMotor[1];
 
 	/**
 	 * This is the constructor for the Navigation class.
-	 * @param odometer An instance of the Odometer class.
-	 * @param leftMotor An instance of the EV3LargeRegulatedMotor that controls the left motor.
-	 * @param rightMotor An instance of the EV3LargeRegulatedMotor that controls the right motor.
+	 * 
+	 * @param odometer
+	 *            An instance of the Odometer class.
+	 * @param leftMotor
+	 *            An instance of the EV3LargeRegulatedMotor that controls the left
+	 *            motor.
+	 * @param rightMotor
+	 *            An instance of the EV3LargeRegulatedMotor that controls the right
+	 *            motor.
 	 */
 	public Navigation(Odometer odometer, EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor) {
 		this.odometer = odometer;
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
-//		syncList[0] = leftMotor; 
-//		rightMotor.synchronizeWith(syncList);
+		// syncList[0] = leftMotor;
+		// rightMotor.synchronizeWith(syncList);
 	}
 
 	public void run() {
-//		leftMotor.stop(true);
-//		rightMotor.stop(true);
+		// leftMotor.stop(true);
+		// rightMotor.stop(true);
 
 	}
 
@@ -52,17 +59,17 @@ public class Navigation extends Thread {
 
 	public void travelTo(double x, double y) {
 
-      currX = odometer.getX();
-      currY = odometer.getY();
-      currTheta = odometer.getTheta();
+		currX = odometer.getX();
+		currY = odometer.getY();
+		currTheta = odometer.getTheta();
 
-      // calculating the information needed (destination - current) for both y
-      // and x, in order to calculate the minimum angle using arctan
-      double deltaX = (x * CaptureFlag.TILE_LENGTH) - currX;
-      double deltaY = (y * CaptureFlag.TILE_LENGTH) - currY;
+		// calculating the information needed (destination - current) for both y
+		// and x, in order to calculate the minimum angle using arctan
+		double deltaX = (x * CaptureFlag.TILE_LENGTH) - currX;
+		double deltaY = (y * CaptureFlag.TILE_LENGTH) - currY;
 
-//      // calculating the minimum angle using Math.atan2 method
-//      double theta = Math.atan2(deltaX, deltaY) - currTheta;
+		// // calculating the minimum angle using Math.atan2 method
+		// double theta = Math.atan2(deltaX, deltaY) - currTheta;
 
 		// rotate the robot towards its new way point
 		turnTo(x, y);
@@ -75,82 +82,86 @@ public class Navigation extends Thread {
 
 		// travel to the next point, and don't wait until the action is
 		// complete. So the boolean in both rotate method should be true
-		
-		leftMotor.setSpeed(CaptureFlag.FORWARDSPEED-1);
+
+		leftMotor.setSpeed(CaptureFlag.FORWARDSPEED - 1);
 		rightMotor.setSpeed(CaptureFlag.FORWARDSPEED);
-		
-		
-//		rightMotor.startSynchronization();
+
+		// rightMotor.startSynchronization();
 		rightMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, distToTravel), true);
 		leftMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, distToTravel), false);
-//		rightMotor.endSynchronization();
-		
-//		rightMotor.startSynchronization();
-//		leftMotor.stop(true);
-//		rightMotor.stop(true);
-	
-//		rightMotor.endSynchronization();
+		// rightMotor.endSynchronization();
+
+		// rightMotor.startSynchronization();
+		// leftMotor.stop(true);
+		// rightMotor.stop(true);
+
+		// rightMotor.endSynchronization();
 	}
 
 	/**
-	 * This method takes an angle theta as input. It starts by setting the speed of
-	 * both motors. The angle is between -360 and 360 degrees, but since this
-	 * methods should always make the robot turn with the minimum angle possible,
-	 * theta should be updated. If theta is greater than 180 degrees, instead of
-	 * turning positively, the robot turns negatively by an angle of theta - 360.
-	 * And if theta is less than or equal to -180, instead of turning negatively,
-	 * the robot turns positevly by an angle of theta + 360.
+	 * This method turns to the angle passed, it takes an angle theta as input. It
+	 * starts by setting the speed of both motors. The angle is between -360 and 360
+	 * degrees, but since this methods should always make the robot turn with the
+	 * minimum angle possible, theta should be updated. If theta is greater than 180
+	 * degrees, instead of turning positively, the robot turns negatively by an
+	 * angle of theta - 360. And if theta is less than or equal to -180, instead of
+	 * turning negatively, the robot turns positevly by an angle of theta + 360.
 	 * 
 	 * @param theta
-	 *            The angle by which the cart should turn.
+	 *            The angle to which the cart should turn.
 	 */
 	public void turnTo(double x, double y) {
-	  
-	  
-	// get the current position and rotation of the robot, based on its
-      // starting point
-   
-      currX = odometer.getX();
-      currY = odometer.getY();
-      currTheta = odometer.getTheta();
 
-      // calculating the information needed (destination - current) for both y
-      // and x, in order to calculate the minimum angle using arctan
-      double deltaX = (x * CaptureFlag.TILE_LENGTH) - currX;
-      double deltaY = (y * CaptureFlag.TILE_LENGTH) - currY;
+		// get the current position and rotation of the robot, based on its
+		// starting point
 
-      // calculating the minimum angle using Math.atan2 method
-      double theta = Math.atan2(deltaX, deltaY) - currTheta;
-//	  rightMotor.synchronizeWith(syncList);
-//      rightMotor.startSynchronization();
-      
-      turn(theta);
+		currX = odometer.getX();
+		currY = odometer.getY();
+		currTheta = odometer.getTheta();
+
+		// calculating the information needed (destination - current) for both y
+		// and x, in order to calculate the minimum angle using arctan
+		double deltaX = (x * CaptureFlag.TILE_LENGTH) - currX;
+		double deltaY = (y * CaptureFlag.TILE_LENGTH) - currY;
+
+		// calculating the minimum angle using Math.atan2 method
+		double theta = Math.atan2(deltaX, deltaY) - currTheta;
+		// rightMotor.synchronizeWith(syncList);
+		// rightMotor.startSynchronization();
+
+		turn(theta);
 	}
-	
+
+	/**
+	 * This method turns by the angle given.
+	 * 
+	 * @param theta
+	 *            The angle to turn by.
+	 */
 	protected void turn(double theta) {
-	  leftMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
-      rightMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
+		leftMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
+		rightMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
 
-      // adjusting the angle in order to have an optimal turn (a turn with the
-      // minimum angle)
-      if (theta <= -Math.PI) {
-          theta += Math.PI * 2;
-      } else if (theta > Math.PI) {
-          theta -= Math.PI * 2;
-      }
+		// adjusting the angle in order to have an optimal turn (a turn with the
+		// minimum angle)
+		if (theta <= -Math.PI) {
+			theta += Math.PI * 2;
+		} else if (theta > Math.PI) {
+			theta -= Math.PI * 2;
+		}
 
-      theta = theta * 180.0 / Math.PI;
+		theta = theta * 180.0 / Math.PI;
 
-      // turn to the left if angle is negative
-      if (theta < 0) {
-          leftMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -theta+2), true);//+2
-          rightMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -theta+2), false);
-      }
-      // turn to the right if angle is positive
-      else {
-          leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, theta-2), true);//-2
-          rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, theta-2), false);
-      }
-//    rightMotor.endSynchronization();
+		// turn to the left if angle is negative
+		if (theta < 0) {
+			leftMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -theta + 2), true);// +2
+			rightMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -theta + 2), false);
+		}
+		// turn to the right if angle is positive
+		else {
+			leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, theta - 2), true);// -2
+			rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, theta - 2), false);
+		}
+		// rightMotor.endSynchronization();
 	}
 }

@@ -107,6 +107,9 @@ public class FlagDetection {
 
 		leftMotor.setSpeed(100);
 		rightMotor.setSpeed(100);
+		
+		//TODO turn to the left to face the edge first
+		//nav.turnTo()
 		// rotate through 180 degrees to sweep the two squares for 'flags'
 		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 180), true);
 		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 180), true);
