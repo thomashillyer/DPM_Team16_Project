@@ -107,9 +107,9 @@ public class FlagDetection {
 
 		leftMotor.setSpeed(100);
 		rightMotor.setSpeed(100);
-		
-		//TODO turn to the left to face the edge first
-		//nav.turnTo()
+
+		// TODO turn to the left to face the edge first
+		// nav.turnTo()
 		// rotate through 180 degrees to sweep the two squares for 'flags'
 		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 180), true);
 		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 180), true);
@@ -121,37 +121,33 @@ public class FlagDetection {
 		List<Integer> toRemove = new ArrayList<>();
 
 		// remove points that are too close together i.e. false positives
-		// not sure this is the best way to do this
-		/*
-		 * for (int i = 0; i < points.size(); i++) { for (int j = i + 1; j <
-		 * points.size(); j++) { if (Math.abs(points.get(i).getX() -
-		 * points.get(j).getX()) < 2) { toRemove.add(j); } } }
-		 * 
-		 * Object[] pointArray = points.toArray();
-		 * 
-		 * for (int i : toRemove) { pointArray[i] = null; }
-		 * 
-		 * points = new ArrayList<>();
-		 * 
-		 * for (int i = 0; i < pointArray.length; i++) { if (pointArray[i] != null) {
-		 * points.add((Point2D.Double) pointArray[i]); } }
-		 */
-
-		// the following does the same as above
+		// is weird because it prevents missin points
 		for (int i = 0; i < points.size(); i++) {
 			for (int j = i + 1; j < points.size(); j++) {
-				//2 is arbitrary
-				//should we compare y too?
 				if (Math.abs(points.get(i).getX() - points.get(j).getX()) < 2) {
-					points.remove(j);
+					toRemove.add(j);
 				}
+			}
+		}
+
+		Object[] pointArray = points.toArray();
+
+		for (int i : toRemove) {
+			pointArray[i] = null;
+		}
+
+		points = new ArrayList<>();
+
+		for (int i = 0; i < pointArray.length; i++) {
+			if (pointArray[i] != null) {
+				points.add((Point2D.Double) pointArray[i]);
 			}
 		}
 
 		// hopefully only 3 points
 		System.out.println(points.size());
 
-		//TODO fix travelling to flags and implement logic to check colour of flag
+		// TODO fix travelling to flags and implement logic to check colour of flag
 		for (Point2D.Double p : points) {
 
 			System.out.println(OdometryDisplay.formattedDoubleToString(p.getX(), 3) + " , "

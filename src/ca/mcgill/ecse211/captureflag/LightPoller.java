@@ -10,6 +10,7 @@ public class LightPoller extends Thread {
 	private LightLocalization li;
 	private SampleProvider cs;
 	private float[] csData;
+	private FlagDetection flag;
 	private volatile boolean kill = false;
 
 	// simple poller for getting samples for light sensor
@@ -17,6 +18,11 @@ public class LightPoller extends Thread {
 		this.li = li;
 		this.cs = cs;
 		this.csData = csData;
+	}
+	public LightPoller(SampleProvider cs, float[] csData, FlagDetection flag) {
+		this.cs = cs;
+		this.csData = csData;
+		this.flag = flag;
 	}
 
 	// polls light sensor

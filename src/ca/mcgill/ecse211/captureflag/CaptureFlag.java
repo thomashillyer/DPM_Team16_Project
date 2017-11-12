@@ -31,6 +31,8 @@ public class CaptureFlag {
 
 	private static final Port usPort = LocalEV3.get().getPort("S1");
 	private static final Port lightSampler = LocalEV3.get().getPort("S2");
+	private static final Port flagLightSampler = LocalEV3.get().getPort("S3");
+
 
 	public static TextLCD t = LocalEV3.get().getTextLCD();
 
@@ -76,6 +78,11 @@ public class CaptureFlag {
 		SensorModes colorSamplerSensor = new EV3ColorSensor(lightSampler);
 		SampleProvider colorSensorValue = colorSamplerSensor.getMode("Red");
 		float[] colorSensorData = new float[colorSamplerSensor.sampleSize()];
+		
+		//set up flag color sensor
+		EV3ColorSensor flagColorSamplerSensor = new EV3ColorSensor(flagLightSampler);
+		SampleProvider flagColorSensorValue = flagColorSamplerSensor.getRGBMode();
+		float[] flagColorSensorData = new float[flagColorSensorValue.sampleSize()];
 
 		// instantiate classes
 		Odometer odometer = new Odometer(leftMotor, rightMotor);
@@ -96,40 +103,49 @@ public class CaptureFlag {
 		// server. Remove it to make way for getting data from server.
 		int[] points = { x0, y0, xC, yC, corner };
 		LightLocalization lightLocal = new LightLocalization(leftMotor, rightMotor, odometer, nav);
+		
 		LightPoller lp = new LightPoller(colorSensorValue, colorSensorData, lightLocal);
+		LightPoller lp_flag = new LightPoller(flagColorSensorValue, flagColorSensorData, flag);
 
 		GameController gc = new GameController(rightMotor, leftMotor, sensorMotor, odometer, lightLocal, usLocal, lp,
-				usPoller, nav, conn, flag);
+				usPoller, nav, conn, flag, lp_flag);
 
 		// TODO remove the switch case as it will not be used for the final project.
 		// Could maybe stay for testing purposes.
-		switch (option) {
-		case Button.ID_LEFT:
-			odometer.start();
-			// usPoller.start();
-			odoDispl.start();
-			// screen.clear();
-			// usLocal.start();
-			// lightLocal.start();
-			// lp.start();
-			gc.start();
-			t.clear();
-			break;
-		case Button.ID_RIGHT:
-			// UltrasonicPoller usPoll = new UltrasonicPoller(usSensor, usData, usLocal);
-			// odometer.start();
-			// usPoll.start();
-			// odoDispl.start();
-			// screen.clear();
-			// usLocal.start();
-			// Button.waitForAnyPress();
-			// lightLocal.start();
-			break;
-		default:
-			System.out.println("Error - invalid button"); // None of the above - abort
-			System.exit(-1);
-			break;
-		}
+//		switch (option) {
+//		case Button.ID_LEFT:
+//			odometer.start();
+//			// usPoller.start();
+//			odoDispl.start();
+//			// screen.clear();
+//			// usLocal.start();
+//			// lightLocal.start();
+//			// lp.start();
+//			gc.start();
+//			t.clear();
+//			break;
+//		case Button.ID_RIGHT:
+//			// UltrasonicPoller usPoll = new UltrasonicPoller(usSensor, usData, usLocal);
+//			// odometer.start();
+//			// usPoll.start();
+//			// odoDispl.start();
+//			// screen.clear();
+//			// usLocal.start();
+//			// Button.waitForAnyPress();
+//			// lightLocal.start();
+//			break;
+//		default:
+//			System.out.println("Error - invalid button"); // None of the above - abort
+//			System.exit(-1);
+//			break;
+//		}
+		
+		//dont start until button pressed
+		Button.waitForAnyPress();
+		odometer.start();
+		odoDispl.start();
+		gc.start();
+		t.clear();
 
 		// escape at any point during program execution if escape button is pressed
 		while (Button.waitForAnyPress() != Button.ID_ESCAPE)
@@ -175,8 +191,8 @@ public class CaptureFlag {
 		// }
 		//
 		// t.clear(); // the screen at initialization
-		t.drawString("left = fallingEdge", 0, 0);
-		t.drawString("right = risingEdge", 0, 1);
+		t.drawString("left/right = start", 0, 0);
+		//t.drawString("right = risingEdge", 0, 1);
 	}
 
 	/**

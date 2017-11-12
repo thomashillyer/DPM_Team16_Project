@@ -29,6 +29,7 @@ public class GameController extends Thread {
 	// private EV3LargeRegulatedMotor[] syncList = new EV3LargeRegulatedMotor[1];
 
 	private FlagDetection flag;
+	private LightPoller lp_flag;
 
 	// all game variables
 	static int redTeam; // team number starting from red
@@ -75,11 +76,12 @@ public class GameController extends Thread {
 
 	int flag_zone_x; // calculated middle point of the search region x
 	int flag_zone_y; // calculated middle point of the search region y
+	
 
 	// constructor
 	public GameController(EV3LargeRegulatedMotor rightMotor, EV3LargeRegulatedMotor leftMotor,
 			EV3MediumRegulatedMotor zip, Odometer odo, LightLocalization li, UltrasonicLocalization us, LightPoller lp,
-			UltrasonicPoller usPoller, Navigation nav, WifiConnection conn, FlagDetection flag) {
+			UltrasonicPoller usPoller, Navigation nav, WifiConnection conn, FlagDetection flag, LightPoller lp_flag) {
 		this.li = li;
 		this.us = us;
 		this.lp = lp;
@@ -92,6 +94,7 @@ public class GameController extends Thread {
 		this.rightMotor = rightMotor;
 		this.leftMotor = leftMotor;
 		this.flag = flag;
+		this.lp_flag = lp_flag;
 	}
 
 	@SuppressWarnings("rawtypes")
