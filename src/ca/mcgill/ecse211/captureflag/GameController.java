@@ -53,6 +53,7 @@ public class GameController extends Thread {
 	static int zc_g_y; // end point corresponding to zip line in green zone y
 	static int zo_g_x; // end point together with ZC_G indicates direction of zip line x
 	static int zo_g_y; // end point together with ZC_G indicates direction of zip line y
+
 	static int sh_ll_x; // lower left hand corner of horizontal shallow water zone x
 	static int sh_ll_y; // lower left hand corner of horizontal shallow water zone y
 	static int sh_ur_x; // upper right hand corner of horizontal shallow water zone x
@@ -61,6 +62,8 @@ public class GameController extends Thread {
 	static int sv_ll_y; // lower left hand corner of vertical shallow water zone y
 	static int sv_ur_x; // upper right hand corner of vertical shallow water zone x
 	static int sv_ur_y; // upper right hand corner of vertical shallow water zone y
+
+	// Flag search areas
 	static int sr_ll_x; // lower left hand corner of search region in red player zone x
 	static int sr_ll_y; // lower left hand corner of search region in red player zone y
 	static int sr_ur_x; // upper right hand corner of search region in red player zone x
@@ -139,6 +142,66 @@ public class GameController extends Thread {
 		// li.anyPointLocalization();
 		// lp.killTask();
 		// rightMotor.endSynchronization();
+
+		int flag_zone_x = 0, flag_zone_y = 0;
+		if (/* red */true) {
+			// the search region is long in the x direction
+			if (Math.abs(sr_ll_x - sr_ur_x) == 2) {
+				flag_zone_x = (sr_ll_x + sr_ur_x) / 2;
+
+				// y is less than 6, search region is in the lower half of the board
+				// TODO may have weird effects if the search region is along the center axis of
+				// the board
+				if (sr_ll_y < 6 || sr_ur_y < 6) {
+					flag_zone_y = Math.max(sr_ll_y, sr_ur_y);
+				} else { // search region is in upper half of board
+					flag_zone_y = Math.min(sr_ll_y, sr_ur_y);
+				}
+
+			} // the search region is long in y direction
+			else if (Math.abs(sr_ll_y - sr_ur_y) == 2) {
+				flag_zone_y = (sr_ll_y + sr_ur_y) / 2;
+
+				// search region is on left side of board
+				// TODO may have weird effects if the search region is along the center axis of
+				// the board
+				if (sr_ll_x < 6 || sr_ur_x < 6) {
+					flag_zone_x = Math.max(sr_ll_x, sr_ur_x);
+				} else {// search region is on right side of board
+					flag_zone_x = Math.min(sr_ll_x, sr_ur_x);
+				}
+			}
+		} /* green */
+		else {
+			// the search region is long in the x direction
+			if (Math.abs(sg_ll_x - sg_ur_x) == 2) {
+				flag_zone_x = (sg_ll_x + sg_ur_x) / 2;
+
+				// y is less than 6, search region is in the lower half of the board
+				// TODO may have weird effects if the search region is along the center axis of
+				// the board
+				if (sg_ll_y < 6 || sg_ur_y < 6) {
+					flag_zone_y = Math.max(sg_ll_y, sg_ur_y);
+				} else { // search region is in upper half of board
+					flag_zone_y = Math.min(sg_ll_y, sg_ur_y);
+				}
+
+			} // the search region is long in y direction
+			else if (Math.abs(sg_ll_y - sg_ur_y) == 2) {
+				flag_zone_y = (sg_ll_y + sg_ur_y) / 2;
+
+				// search region is on left side of board
+				// TODO may have weird effects if the search region is along the center axis of
+				// the board
+				if (sg_ll_x < 6 || sg_ur_x < 6) {
+					flag_zone_x = Math.max(sg_ll_x, sg_ur_x);
+				} else {// search region is on right side of board
+					flag_zone_x = Math.min(sg_ll_x, sg_ur_x);
+				}
+			}
+		}
+		nav.travelTo(flag_zone_x, flag_zone_y);
+		flag.findFlag(); //TODO needs a lot of work
 	}
 
 	/**

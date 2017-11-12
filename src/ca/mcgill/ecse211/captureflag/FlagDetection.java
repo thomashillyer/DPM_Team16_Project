@@ -109,7 +109,7 @@ public class FlagDetection {
 		rightMotor.setSpeed(100);
 		// rotate through 180 degrees to sweep the two squares for 'flags'
 		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 180), true);
-		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 180), false);
+		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 180), true);
 
 		synchronized (lock) {
 			isFlagDetecting = false;
@@ -148,6 +148,7 @@ public class FlagDetection {
 		// hopefully only 3 points
 		System.out.println(points.size());
 
+		//TODO fix travelling to flags and implement logic to check colour of flag
 		for (Point2D.Double p : points) {
 
 			System.out.println(OdometryDisplay.formattedDoubleToString(p.getX(), 3) + " , "
