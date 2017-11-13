@@ -79,7 +79,40 @@ public class GameController extends Thread {
 
 	boolean assignedGreen = true;
 
-	// constructor
+	/**
+	 * Constructor for the game controller, the class that runs all game logic.
+	 * 
+	 * @param rightMotor
+	 *            Right motor object
+	 * @param leftMotor
+	 *            Left motor object
+	 * @param zip
+	 *            Top (pulley) motor object
+	 * @param odo
+	 *            Odometer object, keeps track of motor rotations
+	 * @param li
+	 *            Light localization object, used to determine accurate location
+	 *            based on grid lines
+	 * @param us
+	 *            Ultrasonic localization object, used to roughly orient the robot
+	 *            for initial light localization based on the corner walls
+	 * @param lp
+	 *            Light poller object used to get data from the rear downward-facing
+	 *            light sensor
+	 * @param usPoller
+	 *            Ultrasonic poller object, used to get data from the front
+	 *            ultrasonic sensor
+	 * @param nav
+	 *            Navigation object, used to turn and navigate to points
+	 * @param conn
+	 *            Wifi connection object, used to get the data from the server
+	 * @param flag
+	 *            Flag detection object, used to search the region that holds the
+	 *            flag and find the correct flag
+	 * @param lp_flag
+	 *            Light poller object used to get data from the front-facing light
+	 *            sensor
+	 */
 	public GameController(EV3LargeRegulatedMotor rightMotor, EV3LargeRegulatedMotor leftMotor,
 			EV3MediumRegulatedMotor zip, Odometer odo, LightLocalization li, UltrasonicLocalization us, LightPoller lp,
 			UltrasonicPoller usPoller, Navigation nav, WifiConnection conn, FlagDetection flag, LightPoller lp_flag) {
@@ -98,6 +131,11 @@ public class GameController extends Thread {
 		this.lp_flag = lp_flag;
 	}
 
+	/**
+	 * This method is the controller for all game logic. It gets data from the
+	 * server and then runs through a set of tasks, the order of which depends on
+	 * whether the robot is assigned to the red or green team.
+	 */
 	@SuppressWarnings("rawtypes")
 	public void run() {
 		// --------Integration---------
@@ -113,7 +151,6 @@ public class GameController extends Thread {
 
 		flag_zone_x = 0;
 		flag_zone_y = 0;
-		calculateSearchRegionPoint();
 
 		// Ultrasonic localization
 		usPoller.start();
@@ -174,10 +211,13 @@ public class GameController extends Thread {
 			// end localize at point after zipline
 
 			// navigate to flag region
+			calculateSearchRegionPoint();
 			nav.travelTo(flag_zone_x, flag_zone_y);
 			// search for flag - not needed for beta demo
 			// flag.findFlag(); // TODO needs a lot of work
 			// end search for flag
+
+			// TODO after beta add logic for bridge traversal etc
 
 		} else if (redTeam == CaptureFlag.TEAM_NUMBER) {
 			assignedGreen = false;

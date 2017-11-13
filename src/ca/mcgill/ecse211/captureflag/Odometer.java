@@ -3,8 +3,9 @@ package ca.mcgill.ecse211.captureflag;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 /**
- * This class will instantiate an odometer that will allow us to keep track of and update our
- * robot's position and orientation using the motors' built-in tachometers
+ * This class will instantiate an odometer that will allow us to keep track of
+ * and update our robot's position and orientation using the motors' built-in
+ * tachometers
  */
 public class Odometer extends Thread {
 	// robot position
@@ -39,14 +40,14 @@ public class Odometer extends Thread {
 	// run method (required for Thread)
 	public void run() {
 		long updateStart, updateEnd;
-		while(true) {
+		while (true) {
 			while (leftMotor.isMoving() || rightMotor.isMoving()) {
 				updateStart = System.currentTimeMillis();
-	
+
 				// get value of tacho count for distance calculation
 				int currTachoR = rightMotor.getTachoCount();
 				int currTachoL = leftMotor.getTachoCount();
-	
+
 				// calculate distance of each wheel
 				// dist = 2*PI*wheelRadius*wheelRotation/360
 				double distR = Math.PI * CaptureFlag.WHEEL_RADIUS * (currTachoR - rightMotorTachoCount) / 180;
@@ -54,49 +55,53 @@ public class Odometer extends Thread {
 				// calculate change in theta and center distance
 				double deltaD = .5 * (distR + distL);
 				double deltaT = (distL - distR) / CaptureFlag.TRACK;
-	
+
 				synchronized (lock) {
 					// set all values in sync block to avoid race conditions
 					rightMotorTachoCount = currTachoR;
 					leftMotorTachoCount = currTachoL;
-	
+
 					theta += deltaT;
-	
+
 					// correction so theta is never negative
 					if (theta > 2 * Math.PI)
 						theta += -(2 * Math.PI);
 					else if (theta < 0)
 						theta += 2 * Math.PI;
-	
+
 					// calculate change in x and y
 					double dX = deltaD * Math.sin(theta);
 					double dY = deltaD * Math.cos(theta);
-	
+
 					x += dX;
 					y += dY;
 				}
-	
+
 				// this ensures that the odometer only runs once every period
 				updateEnd = System.currentTimeMillis();
-				//if (updateEnd - updateStart < ODOMETER_PERIOD) {
-					try {
-						Thread.sleep(10);
-					} catch (InterruptedException e) {
-						// there is nothing to be done here because it is not
-						// expected that the odometer will be interrupted by
-						// another thread
-					}
+				// if (updateEnd - updateStart < ODOMETER_PERIOD) {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					// there is nothing to be done here because it is not
+					// expected that the odometer will be interrupted by
+					// another thread
 				}
-			//}
+			}
+			// }
 		}
 	}
 
 	/**
-	 * Method assigns position array elements with x, y, and orientation values currently being read from odometer
-	 * if the corresponding boolean array element is true
+	 * Method assigns position array elements with x, y, and orientation values
+	 * currently being read from odometer if the corresponding boolean array element
+	 * is true
 	 * 
-	 * @param position Array that contains x and y position and angle oriented to
-	 * @param update Boolean array that allows values to be assigned to position array if element is true
+	 * @param position
+	 *            Array that contains x and y position and angle oriented to
+	 * @param update
+	 *            Boolean array that allows values to be assigned to position array
+	 *            if element is true
 	 */
 	public void getPosition(double[] position, boolean[] update) {
 		// ensure that the values don't change while the odometer is running
@@ -154,7 +159,8 @@ public class Odometer extends Thread {
 
 	/**
 	 * 
-	 * @param x X position to update on odometer
+	 * @param x
+	 *            X position to update on odometer
 	 */
 	public void setX(double x) {
 		synchronized (lock) {
@@ -164,16 +170,19 @@ public class Odometer extends Thread {
 
 	/**
 	 * 
-	 * @param y Y position to update on odometer
+	 * @param y
+	 *            Y position to update on odometer
 	 */
 	public void setY(double y) {
 		synchronized (lock) {
 			this.y = y;
 		}
 	}
+
 	/**
 	 * 
-	 * @param theta Angle to update on odometer
+	 * @param theta
+	 *            Angle to update on odometer
 	 */
 	public void setTheta(double theta) {
 		synchronized (lock) {

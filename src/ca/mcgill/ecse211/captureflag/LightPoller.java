@@ -42,8 +42,8 @@ public class LightPoller extends Thread {
 				if (li != null) {
 					li.processData(value);
 				} else {
-					//TODO implement actual flag detection code
-					//flag.processLightSensorData(value); 
+					// TODO implement actual flag detection code
+					// flag.processLightSensorData(value);
 				}
 				try {
 					Thread.sleep(50);

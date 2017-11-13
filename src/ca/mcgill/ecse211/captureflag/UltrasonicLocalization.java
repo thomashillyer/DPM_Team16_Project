@@ -5,10 +5,12 @@ import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 /**
- * The UltrasonicLocalization class is used to orient the robot to 0 degrees. It is used only in the beginning of the competition, when the robot is still in the corner.
+ * The UltrasonicLocalization class is used to orient the robot to 0 degrees. It
+ * is used only in the beginning of the competition, when the robot is still in
+ * the corner.
  */
 
-public class UltrasonicLocalization{
+public class UltrasonicLocalization {
 
 	private final int HORIZONTAL_CONST = 35;
 	private final int HORIZONTAL_MARGIN = 2;
@@ -27,18 +29,24 @@ public class UltrasonicLocalization{
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
 
 	private Object lock = new Object();
-	
+
 	private volatile boolean isLocalizing = false;
-	
+
 	private boolean fallingEdgeDetected = false;
-	
+
 	/**
 	 * The constructor for the UltrasonicLocalization class
-	 * @param leftMotor An instance of the EV3LargeRegulatedMotor that controls the left motor.
-	 * @param rightMotor An instance of the EV3LargeRegulatedMotor that controls the right motor.
-	 * @param odometer An instance of the Odometer class.
+	 * 
+	 * @param leftMotor
+	 *            An instance of the EV3LargeRegulatedMotor that controls the left
+	 *            motor.
+	 * @param rightMotor
+	 *            An instance of the EV3LargeRegulatedMotor that controls the right
+	 *            motor.
+	 * @param odometer
+	 *            An instance of the Odometer class.
 	 */
-	
+
 	public UltrasonicLocalization(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,
 			Odometer odometer) {
 		this.leftMotor = leftMotor;
@@ -62,8 +70,7 @@ public class UltrasonicLocalization{
 		synchronized (lock) {
 			isLocalizing = true;
 		}
-		
-		
+
 		leftMotor.stop();
 		leftMotor.setAcceleration(CaptureFlag.ACCELERATION);
 		rightMotor.stop();
@@ -112,9 +119,11 @@ public class UltrasonicLocalization{
 		// System.out.println(deltaTheta);
 		// rotate to face 0 degrees
 		leftMotor.rotate(
-				-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, deltaTheta * 180 / Math.PI), true);
+				-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, deltaTheta * 180 / Math.PI),
+				true);
 		rightMotor.rotate(
-				CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, deltaTheta * 180 / Math.PI), false);
+				CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, deltaTheta * 180 / Math.PI),
+				false);
 
 		synchronized (lock) {
 			isLocalizing = true;
@@ -125,7 +134,6 @@ public class UltrasonicLocalization{
 		return this.distanceUS;
 	}
 
-	
 	/**
 	 * Filter any extraneous distances returned by the sensor
 	 * 
@@ -159,7 +167,7 @@ public class UltrasonicLocalization{
 			}
 		}
 	}
-	
+
 	protected boolean isLocalizing() {
 		boolean result;
 		synchronized (lock) {
