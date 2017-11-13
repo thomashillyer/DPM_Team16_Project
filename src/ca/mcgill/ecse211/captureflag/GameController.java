@@ -138,28 +138,55 @@ public class GameController extends Thread {
 	 */
 	@SuppressWarnings("rawtypes")
 	public void run() {
+	  
+
 		lp.start();
 		li.cornerLocalization(0);
 		lp.killTask();
 		
-		nav.travelTo(2, 3);
+		nav.travelTo(2, 1);
 //		
 //		Button.waitForAnyPress();
 		lp.restartTask();
-		li.do_localization(2, 3);
+		li.do_localization(2, 1);
 		lp.killTask();
-		Button.waitForAnyPress();
-		nav.travelTo(2, 3);
+		//Button.waitForAnyPress();
+		nav.travelTo(2, 1);
 		
-		nav.travelTo(1, 3);
+		
+		nav.travelTo(2, 2);
+		
+		lp.killTask();
+		
+		leftMotor.forward();
+		rightMotor.forward();
+		zip.setSpeed(150);
+		zip.backward();
+		//time
+		lp.restartTask();
+		li.afterZipLine();
+		
+		
+		
 		
 //		nav.turn2(45,true);
 		
-		lp.restartTask();
-		li.do_localization(1, 3);
-		lp.killTask();
-		
-		nav.travelTo(1, 3);
+//		lp.restartTask();
+//		li.do_localization(2, 2);
+//		lp.killTask();
+//		
+//		nav.travelTo(2, 2);
+//		
+//		
+//		nav.travelTo(3, 1);
+        
+//      nav.turn2(45,true);
+        
+//        lp.restartTask();
+//        li.do_localization(3, 1);
+//        lp.killTask();
+//        
+//        nav.travelTo(3, 1);
 //		nav.turn2(45,true);
 //		lp.restartTask();
 //		li.anyPointLocalization();

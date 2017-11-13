@@ -160,7 +160,7 @@ public class LightLocalization {
 		
 		odometer.setX(x);
 		odometer.setY(y);
-		odometer.setTheta(odometer.getTheta() + deltaThetaY);
+		odometer.setTheta(odometer.getTheta()); //+ deltaThetaY
 		
 		//once the odometer is corrected, we can then navigate to (0 , 0) with our previous method
 	}
@@ -465,5 +465,18 @@ public class LightLocalization {
 		leftMotor.rotate(-CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, 1.15 * CaptureFlag.BOT_LENGTH), false);
 
 		// rightMotor.endSynchronization();
+	}
+	
+	protected void afterZipLine() {
+	  leftMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TILE_LENGTH), true);
+	  rightMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TILE_LENGTH), false);
+	  detectSingleLine = true;
+	  while(detectSingleLine) {
+	    rightMotor.forward();
+	    leftMotor.forward();
+	  }
+	  rightMotor.rotate(-CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, 1.15 * CaptureFlag.BOT_LENGTH), true);
+      leftMotor.rotate(-CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, 1.15 * CaptureFlag.BOT_LENGTH), false);
+      do_localization(2,7);
 	}
 }

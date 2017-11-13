@@ -126,6 +126,7 @@ public class Navigation extends Thread {
 
 		// calculating the minimum angle using Math.atan2 method
 		double theta = Math.atan2(deltaX, deltaY) - currTheta;
+//		System.out.println(theta * 180.0 / Math.PI);
 		// rightMotor.synchronizeWith(syncList);
 		// rightMotor.startSynchronization();
 
@@ -154,13 +155,13 @@ public class Navigation extends Thread {
 
 		// turn to the left if angle is negative
 		if (theta < 0) {
-			leftMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -theta + 2), true);// +2
-			rightMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -theta + 2), false);
+			leftMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -theta+2), true);// +2
+			rightMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -theta+2), false);
 		}
 		// turn to the right if angle is positive
 		else {
-			leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, theta - 2), true);// -2
-			rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, theta - 2), false);
+			leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, theta-2), true);// -2
+			rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, theta-2), false);
 		}
 		// rightMotor.endSynchronization();
 	}
