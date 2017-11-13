@@ -41,11 +41,11 @@ public class CaptureFlag {
 
 	protected static final double PULLEY_RADIUS = 2;
 
-	protected static final int ROTATIONSPEED = 100;
+	protected static final int ROTATIONSPEED = 160;
 
 	protected static final int ACCELERATION = 500; // 1000
 	protected static final int NAV_ACCELERATION = 100;
-	protected static final int FORWARDSPEED = 150;
+	protected static final int FORWARDSPEED = 200;
 
 	private static final int FILTER_OUT = 23;
 	private static int filterControl;
@@ -81,9 +81,9 @@ public class CaptureFlag {
 		float[] colorSensorData = new float[colorSamplerSensor.sampleSize()];
 
 		// set up flag color sensor
-		EV3ColorSensor flagColorSamplerSensor = new EV3ColorSensor(flagLightSampler);
-		SampleProvider flagColorSensorValue = flagColorSamplerSensor.getRGBMode();
-		float[] flagColorSensorData = new float[flagColorSensorValue.sampleSize()];
+//		EV3ColorSensor flagColorSamplerSensor = new EV3ColorSensor(flagLightSampler);
+//		SampleProvider flagColorSensorValue = flagColorSamplerSensor.getRGBMode();
+//		float[] flagColorSensorData = new float[flagColorSensorValue.sampleSize()];
 
 		// instantiate classes
 		Odometer odometer = new Odometer(leftMotor, rightMotor);
@@ -106,10 +106,10 @@ public class CaptureFlag {
 		LightLocalization lightLocal = new LightLocalization(leftMotor, rightMotor, odometer, nav);
 
 		LightPoller lp = new LightPoller(colorSensorValue, colorSensorData, lightLocal);
-		LightPoller lp_flag = new LightPoller(flagColorSensorValue, flagColorSensorData, flag);
+//		LightPoller lp_flag = new LightPoller(flagColorSensorValue, flagColorSensorData, flag);
 
 		GameController gc = new GameController(rightMotor, leftMotor, sensorMotor, odometer, lightLocal, usLocal, lp,
-				usPoller, nav, conn, flag, lp_flag);
+				usPoller, nav, conn, flag);
 
 		// TODO remove the switch case as it will not be used for the final project.
 		// Could maybe stay for testing purposes.

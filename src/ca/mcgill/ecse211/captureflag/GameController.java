@@ -115,7 +115,7 @@ public class GameController extends Thread {
 	 */
 	public GameController(EV3LargeRegulatedMotor rightMotor, EV3LargeRegulatedMotor leftMotor,
 			EV3MediumRegulatedMotor zip, Odometer odo, LightLocalization li, UltrasonicLocalization us, LightPoller lp,
-			UltrasonicPoller usPoller, Navigation nav, WifiConnection conn, FlagDetection flag, LightPoller lp_flag) {
+			UltrasonicPoller usPoller, Navigation nav, WifiConnection conn, FlagDetection flag) {
 		this.li = li;
 		this.us = us;
 		this.lp = lp;
@@ -138,103 +138,32 @@ public class GameController extends Thread {
 	 */
 	@SuppressWarnings("rawtypes")
 	public void run() {
-		// --------Integration---------
-		// directly updates the variables in GameController with the values from the
-		// server
-		getDataFromServer();
-
-		// calculate length of zipline
-		double zip_x = Math.abs(zc_g_x - zc_r_x);
-		double zip_y = Math.abs(zc_g_y - zc_r_y);
-		// 1.3 is a safety factor
-		double zipLength = 1.3 * Math.sqrt(Math.pow(zip_x, 2) + Math.pow(zip_y, 2));
-
-		flag_zone_x = 0;
-		flag_zone_y = 0;
-
-		// Ultrasonic localization
-		usPoller.start();
-		us.localize();
-		usPoller.killTask();
-		// End ultrasonic localization
-
-		// check what team you have been assigned to
-		if (greenTeam == CaptureFlag.TEAM_NUMBER) {
-			assignedGreen = true;
-			// Light localization
-			lp.start();
-			li.cornerLocalization(greenCorner);
-			lp.killTask();
-			// end light localization
-
-			// green uses zipline and returns on bridge
-
-			// travel to point before zipline
-			// zc_g is zipline start
-			// zo_g is point before
-			// zc_r is zipline end
-			// zo_r is point after
-			nav.travelTo(zo_g_x, zo_g_y);
-
-			// anypoint light localize
-			lp.restartTask();
-			li.anyPointLocalization(); // dont pass a point because it assumes its close to the point it should be
-			lp.killTask();
-			// set x and y to point before the ramp
-			odo.setX(zo_g_x * CaptureFlag.TILE_LENGTH);
-			odo.setY(zo_g_y * CaptureFlag.TILE_LENGTH);
-			// end anypoint light localize
-
-			// traverse zipline
-			// travel to start of zipline
-			nav.travelTo(zc_g_x, zc_g_y);
-			// get onto zipline and start zip motor
-			zip.setSpeed(250);
-			zip.rotate(CaptureFlag.convertDistance(CaptureFlag.PULLEY_RADIUS, zipLength));
-			leftMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, zipLength), true);
-			rightMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, zipLength), false);
-			odo.setX(zc_r_x * CaptureFlag.TILE_LENGTH);
-			odo.setY(zc_r_y * CaptureFlag.TILE_LENGTH);
-			// end traverse zipline
-
-			// robot is now on the ground at the end of the zipline
-			// drive to approximately zo-r
-			leftMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TILE_LENGTH), true);
-			rightMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TILE_LENGTH), false);
-
-			// localize at point after zipline
-			lp.restartTask();
-			li.anyPointLocalization();
-			lp.killTask();
-			odo.setX(zo_r_x * CaptureFlag.TILE_LENGTH);
-			odo.setY(zo_r_y * CaptureFlag.TILE_LENGTH);
-			// end localize at point after zipline
-
-			// navigate to flag region
-			calculateSearchRegionPoint();
-			nav.travelTo(flag_zone_x, flag_zone_y);
-			// search for flag - not needed for beta demo
-			// flag.findFlag(); // TODO needs a lot of work
-			// end search for flag
-
-			// TODO after beta add logic for bridge traversal etc
-
-		} else if (redTeam == CaptureFlag.TEAM_NUMBER) {
-			assignedGreen = false;
-
-			// Light localization
-			lp.start();
-			li.cornerLocalization(redCorner);
-			lp.killTask();
-			// end light localization
-
-			// red uses bridge and returns over water
-
-			// TODO the rest
-
-		}
-		// ------END Integration-------
-
+		lp.start();
+		li.cornerLocalization(0);
+		lp.killTask();
+		
+		nav.travelTo(2, 3);
+//		
+//		Button.waitForAnyPress();
+		lp.restartTask();
+		li.do_localization(2, 3);
+		lp.killTask();
+		Button.waitForAnyPress();
+		nav.travelTo(2, 3);
+		
+		nav.travelTo(1, 3);
+		
+//		nav.turn2(45,true);
+		
+		lp.restartTask();
+		li.do_localization(1, 3);
+		lp.killTask();
+		
+		nav.travelTo(1, 3);
+//		nav.turn2(45,true);
+//		lp.restartTask();
+//		li.anyPointLocalization();
+//		lp.killTask();
 	}
 
 	/**

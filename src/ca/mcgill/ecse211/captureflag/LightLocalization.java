@@ -26,7 +26,7 @@ public class LightLocalization {
 	// data
 	private int filterCounter = 0;
 	private float oldValue = 0;
-	private int derivativeThreshold = -50;
+	private int derivativeThreshold = -60;
 
 	private int lineCounter = 0;
 	private double xminus, xplus, yminus, yplus;
@@ -50,6 +50,7 @@ public class LightLocalization {
 	private boolean cornerLocalization = false;
 
 	private double[] lines = new double[4];
+	private static final double centerDistanceD = 13.5;
 
 	private EV3LargeRegulatedMotor[] syncList = new EV3LargeRegulatedMotor[1];
 
@@ -75,6 +76,93 @@ public class LightLocalization {
 		this.nav = nav;
 		// syncList[0] = leftMotor;
 		// rightMotor.synchronizeWith(syncList);
+	}
+	
+	public void do_localization(int x_start, int y_start){
+		//Wait for the user to press a button
+		//Button.waitForAnyPress();
+		
+		//System.out.println("Start light sensor localization");
+		lineCounter = 0;
+		lines = new double[4];
+		
+		leftMotor.stop();
+		leftMotor.setAcceleration(CaptureFlag.ACCELERATION);
+		rightMotor.stop();
+		rightMotor.setAcceleration(CaptureFlag.ACCELERATION);
+		
+		//before starting the light sensor correction
+		//make sure the robot can detect a line
+//		if(do_calibration) {
+//			calibrateRobot();
+//		}
+		
+		leftMotor.setSpeed(CaptureFlag.FORWARDSPEED);
+		rightMotor.setSpeed(CaptureFlag.FORWARDSPEED);
+		detectFourLines = true;
+		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true);
+		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), false);
+		detectFourLines = false;
+		
+//		boolean crossing = false;
+		double xminus = 0, xplus = 0, yminus = 0, yplus = 0;
+		
+		for(int i = 0; i < lines.length - 1; i++) {
+			for(int j = 0; j < lines.length - 1; j++) {
+				if(lines[j] > lines[j + 1]) {
+					double temp = lines[j];
+					lines[j] = lines[j + 1];
+					lines[j + 1] = temp;
+				}
+			}
+		}
+		
+		if(lines[0] > (2*Math.PI - lines[3])) {
+			double line_angles_copy[] = new double[4];
+			
+			line_angles_copy[0] = lines[3];
+			
+			for(int i = 0; i < lines.length - 1 ; i++) {
+				line_angles_copy[i + 1] = lines[i];
+			}
+			
+			lines = line_angles_copy;
+		}
+
+		yminus = lines[0];
+		xminus = lines[1];
+		yplus  = lines[2];
+		xplus  = lines[3];
+		
+		if(yminus < yplus) {
+			yminus += 2*Math.PI;
+		}
+		
+		if(xplus < xminus) {
+			xplus += 2*Math.PI;
+		}
+		
+		// LCD.drawString(Double.toString(xminus), 0, 3);
+		// LCD.drawString(Double.toString(yplus), 0, 4);
+		// LCD.drawString(Double.toString(xplus), 0, 5);
+		// LCD.drawString(Double.toString(yminus), 0, 6);
+		
+		//from the light sensor values that we got
+		//correct x , y , and theta by the values we got from the sensor
+		
+		double thetay = yminus - yplus;
+		double thetax = xplus - xminus;
+		
+		double x = x_start*CaptureFlag.TILE_LENGTH - centerDistanceD  * Math.cos(thetay/ 2.0);
+		double y = y_start*CaptureFlag.TILE_LENGTH - centerDistanceD* Math.cos(thetax / 2.0);
+		double deltaThetaY = ( Math.PI / 2.0 ) - (yminus) + Math.PI + ( thetay / 2.0 );
+		//deltaThetaX = Math.PI - (Math.toRadians(thetax) / 2.0) - xplus;
+		
+		odometer.setX(x);
+		odometer.setY(y);
+		odometer.setTheta(odometer.getTheta() + deltaThetaY);
+		
+		//once the odometer is corrected, we can then navigate to (0 , 0) with our previous method
 	}
 
 	/**
@@ -199,24 +287,41 @@ public class LightLocalization {
 	}
 
 	protected void anyPointLocalization() {
-		// rightMotor.synchronizeWith(syncList);
-
-		lineCounter = 0;
-		double incomeTheta = odometer.getTheta();
-
 		detectFourLines = true;
+
+		// rotate the robot 360 degrees
 		// rightMotor.startSynchronization();
+		lineCounter = 0;
+		lines = new double[4];
 		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true);
 		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), false);
 		// rightMotor.endSynchronization();
 		detectFourLines = false;
 
-		correctOdometer(incomeTheta);
-
-		Button.waitForAnyPress();
-
+		correctOdometer(0);
 		nav.travelTo(0, 0);
 		nav.turn(-(odometer.getTheta()));
+		
+		
+		// rightMotor.synchronizeWith(syncList);
+
+//		lineCounter = 0;
+//		double incomeTheta = odometer.getTheta();
+//
+//		detectFourLines = true;
+//		// rightMotor.startSynchronization();
+//		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true);
+//		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), false);
+//		// rightMotor.endSynchronization();
+//		detectFourLines = false;
+//
+//		correctOdometer(incomeTheta);
+//
+//		Button.waitForAnyPress();
+//
+//		nav.travelTo(0, 0);
+//		nav.turn(-(odometer.getTheta()));
+		
 		// leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS,
 		// CaptureFlag.TRACK, 3), true);
 		// rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS,
