@@ -76,7 +76,8 @@ public class GameController extends Thread {
 
 	int flag_zone_x; // calculated middle point of the search region x
 	int flag_zone_y; // calculated middle point of the search region y
-	
+
+	boolean assignedGreen = true;
 
 	// constructor
 	public GameController(EV3LargeRegulatedMotor rightMotor, EV3LargeRegulatedMotor leftMotor,
@@ -99,94 +100,100 @@ public class GameController extends Thread {
 
 	@SuppressWarnings("rawtypes")
 	public void run() {
+		// --------Integration---------
 		// directly updates the variables in GameController with the values from the
 		// server
 		getDataFromServer();
-		// --------Integration---------
-		//Ultrasonic localization
-		usPoller.start();
-		us.localize();
-		usPoller.killTask();
-		//End ultrasonic localization
-		//Light localization
-		lp.start();
-		li.cornerLocalization(corner);
-		lp.killTask();
-		//end light localization
-		//travel to ramp corresponding to starting zone
-		nav.travelTo(someX, someY);
-		//end travel
-		//localize at ramp
-		lp.restartTask();
-		li.anyPointLocalization();
-		lp.killTask();
-		odo.setX(someX * CaptureFlag.TILE_LENGTH);
-		odo.setY(someY * CaptureFlag.TILE_LENGTH);
-		//end localize at ramp
-		//traverse river (either zip or bridge)
-		//end traversal
-		//localize
-		lp.restartTask();
-		li.anyPointLocalization();
-		lp.killTask();
-		odo.setX(someX * CaptureFlag.TILE_LENGTH);
-		odo.setY(someY * CaptureFlag.TILE_LENGTH);
-		//end localize
-		//search for flag
+
+		// calculate length of zipline
+		double zip_x = Math.abs(zc_g_x - zc_r_x);
+		double zip_y = Math.abs(zc_g_y - zc_r_y);
+		// 1.3 is a safety factor
+		double zipLength = 1.3 * Math.sqrt(Math.pow(zip_x, 2) + Math.pow(zip_y, 2));
+
 		flag_zone_x = 0;
 		flag_zone_y = 0;
 		calculateSearchRegionPoint();
-		nav.travelTo(flag_zone_x, flag_zone_y);
-		flag.findFlag(); // TODO needs a lot of work
-		//end search for flag
-		
+
+		// Ultrasonic localization
+		usPoller.start();
+		us.localize();
+		usPoller.killTask();
+		// End ultrasonic localization
+
+		// check what team you have been assigned to
+		if (greenTeam == CaptureFlag.TEAM_NUMBER) {
+			assignedGreen = true;
+			// Light localization
+			lp.start();
+			li.cornerLocalization(greenCorner);
+			lp.killTask();
+			// end light localization
+
+			// green uses zipline and returns on bridge
+
+			// travel to point before zipline
+			// zc_g is zipline start
+			// zo_g is point before
+			// zc_r is zipline end
+			// zo_r is point after
+			nav.travelTo(zo_g_x, zo_g_y);
+
+			// anypoint light localize
+			lp.restartTask();
+			li.anyPointLocalization(); // dont pass a point because it assumes its close to the point it should be
+			lp.killTask();
+			// set x and y to point before the ramp
+			odo.setX(zo_g_x * CaptureFlag.TILE_LENGTH);
+			odo.setY(zo_g_y * CaptureFlag.TILE_LENGTH);
+			// end anypoint light localize
+
+			// traverse zipline
+			// travel to start of zipline
+			nav.travelTo(zc_g_x, zc_g_y);
+			// get onto zipline and start zip motor
+			zip.setSpeed(250);
+			zip.rotate(CaptureFlag.convertDistance(CaptureFlag.PULLEY_RADIUS, zipLength));
+			leftMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, zipLength), true);
+			rightMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, zipLength), false);
+			odo.setX(zc_r_x * CaptureFlag.TILE_LENGTH);
+			odo.setY(zc_r_y * CaptureFlag.TILE_LENGTH);
+			// end traverse zipline
+
+			// robot is now on the ground at the end of the zipline
+			// drive to approximately zo-r
+			leftMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TILE_LENGTH), true);
+			rightMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TILE_LENGTH), false);
+
+			// localize at point after zipline
+			lp.restartTask();
+			li.anyPointLocalization();
+			lp.killTask();
+			odo.setX(zo_r_x * CaptureFlag.TILE_LENGTH);
+			odo.setY(zo_r_y * CaptureFlag.TILE_LENGTH);
+			// end localize at point after zipline
+
+			// navigate to flag region
+			nav.travelTo(flag_zone_x, flag_zone_y);
+			// search for flag - not needed for beta demo
+			// flag.findFlag(); // TODO needs a lot of work
+			// end search for flag
+
+		} else if (redTeam == CaptureFlag.TEAM_NUMBER) {
+			assignedGreen = false;
+
+			// Light localization
+			lp.start();
+			li.cornerLocalization(redCorner);
+			lp.killTask();
+			// end light localization
+
+			// red uses bridge and returns over water
+
+			// TODO the rest
+
+		}
 		// ------END Integration-------
-
-		//
-		// // Wait until user decides to end program
-		// Button.waitForAnyPress();
-
-		// nav.turnTo(1,0);
-		// Button.waitForAnyPress();
-		//// nav.turnTo(0);
-		// //Button.waitForAnyPress();
-		// nav.turnTo(1,1);
-		// Button.waitForAnyPress();
-		// nav.turnTo(0,1);
-		// Button.waitForAnyPress();
-		// nav.turnTo(1,1);
-		// -----------
-		lp.start();
-		li.cornerLocalization(corner);
-		lp.killTask();
-
-		Button.waitForAnyPress();
-		nav.travelTo(1, 1);
-		lp.restartTask();
-		li.anyPointLocalization();
-		lp.killTask();
-
-		odo.setX(1 * CaptureFlag.TILE_LENGTH);
-		odo.setY(1 * CaptureFlag.TILE_LENGTH);
-
-		nav.travelTo(0, 2);
-		lp.restartTask();
-		li.anyPointLocalization();
-		lp.killTask();
-		// --------------------------
-
-		// rightMotor.forward();
-		// leftMotor.forward();
-		// zip.setSpeed(150);
-		// zip.forward();
-		// leftMotor.rotate(CaptureFlag.convertDistance( CaptureFlag.WHEEL_RADIUS, 8),
-		// true);
-		// rightMotor.rotate(CaptureFlag.convertDistance( CaptureFlag.WHEEL_RADIUS, 8),
-		// false);
-		// lp.restartTask();
-		// li.anyPointLocalization();
-		// lp.killTask();
-		// rightMotor.endSynchronization();
 
 	}
 
@@ -195,35 +202,8 @@ public class GameController extends Thread {
 	 * or green team and also the orientation of the search region.
 	 */
 	private void calculateSearchRegionPoint() {
-		if (/* red */true) {// TODO implement check for whether on red team or green team
-			// the search region is long in the x direction
-			if (Math.abs(sr_ll_x - sr_ur_x) == 2) {
-				flag_zone_x = (sr_ll_x + sr_ur_x) / 2;
-
-				// y is less than 6, search region is in the lower half of the board
-				// TODO may have weird effects if the search region is along the center axis of
-				// the board
-				if (sr_ll_y < 6 || sr_ur_y < 6) {
-					flag_zone_y = Math.max(sr_ll_y, sr_ur_y);
-				} else { // search region is in upper half of board
-					flag_zone_y = Math.min(sr_ll_y, sr_ur_y);
-				}
-
-			} // the search region is long in y direction
-			else if (Math.abs(sr_ll_y - sr_ur_y) == 2) {
-				flag_zone_y = (sr_ll_y + sr_ur_y) / 2;
-
-				// search region is on left side of board
-				// TODO may have weird effects if the search region is along the center axis of
-				// the board
-				if (sr_ll_x < 6 || sr_ur_x < 6) {
-					flag_zone_x = Math.max(sr_ll_x, sr_ur_x);
-				} else {// search region is on right side of board
-					flag_zone_x = Math.min(sr_ll_x, sr_ur_x);
-				}
-			}
-		} /* green */
-		else {
+		/* green */
+		if (assignedGreen) {
 			// the search region is long in the x direction
 			if (Math.abs(sg_ll_x - sg_ur_x) == 2) {
 				flag_zone_x = (sg_ll_x + sg_ur_x) / 2;
@@ -248,6 +228,34 @@ public class GameController extends Thread {
 					flag_zone_x = Math.max(sg_ll_x, sg_ur_x);
 				} else {// search region is on right side of board
 					flag_zone_x = Math.min(sg_ll_x, sg_ur_x);
+				}
+			}
+		} /* red */
+		else if (!assignedGreen) {
+			// the search region is long in the x direction
+			if (Math.abs(sr_ll_x - sr_ur_x) == 2) {
+				flag_zone_x = (sr_ll_x + sr_ur_x) / 2;
+
+				// y is less than 6, search region is in the lower half of the board
+				// TODO may have weird effects if the search region is along the center axis of
+				// the board
+				if (sr_ll_y < 6 || sr_ur_y < 6) {
+					flag_zone_y = Math.max(sr_ll_y, sr_ur_y);
+				} else { // search region is in upper half of board
+					flag_zone_y = Math.min(sr_ll_y, sr_ur_y);
+				}
+
+			} // the search region is long in y direction
+			else if (Math.abs(sr_ll_y - sr_ur_y) == 2) {
+				flag_zone_y = (sr_ll_y + sr_ur_y) / 2;
+
+				// search region is on left side of board
+				// TODO may have weird effects if the search region is along the center axis of
+				// the board
+				if (sr_ll_x < 6 || sr_ur_x < 6) {
+					flag_zone_x = Math.max(sr_ll_x, sr_ur_x);
+				} else {// search region is on right side of board
+					flag_zone_x = Math.min(sr_ll_x, sr_ur_x);
 				}
 			}
 		}
