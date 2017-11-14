@@ -31,7 +31,7 @@ public class CaptureFlag {
 
 	private static final Port usPort = LocalEV3.get().getPort("S1");
 	private static final Port lightSampler = LocalEV3.get().getPort("S2");
-	private static final Port flagLightSampler = LocalEV3.get().getPort("S3");
+	//private static final Port flagLightSampler = LocalEV3.get().getPort("S3");
 
 	public static TextLCD t = LocalEV3.get().getTextLCD();
 
@@ -39,7 +39,7 @@ public class CaptureFlag {
 	protected static final double WHEEL_RADIUS = 2.093;
 	protected static final double TRACK = 14.8;
 
-	protected static final double PULLEY_RADIUS = 2;
+	protected static final double PULLEY_RADIUS = 1;
 
 	protected static final int ROTATIONSPEED = 160;
 
@@ -54,7 +54,7 @@ public class CaptureFlag {
 
 	protected static final double TILE_LENGTH = 30.48;
 
-	private static final String SERVER_IP = "192.168.2.37";
+	private static final String SERVER_IP = "192.168.2.27";
 	protected static final int TEAM_NUMBER = 16;
 	// Enable/disable printing of debug info from the WiFi class
 	private static final boolean ENABLE_DEBUG_WIFI_PRINT = true;
@@ -94,10 +94,10 @@ public class CaptureFlag {
 		UltrasonicPoller usPoller = new UltrasonicPoller(usSensor, usData, usLocal, flag);
 		// Initialize WifiConnection class
 		WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
-		do {
-			printMenu();
-			option = Button.waitForAnyPress();
-		} while (option != Button.ID_LEFT && option != Button.ID_RIGHT); // and wait for a button press. The button
+//		do {
+//			printMenu();
+//			option = Button.waitForAnyPress();
+//		} while (option != Button.ID_LEFT && option != Button.ID_RIGHT); // and wait for a button press. The button
 
 		// pass points to light localization
 		// TODO the following code is vestigial, game data will be retrieved from the
@@ -142,7 +142,7 @@ public class CaptureFlag {
 		// }
 
 		// dont start until button pressed
-		Button.waitForAnyPress();
+//		Button.waitForAnyPress();
 		odometer.start();
 		odoDispl.start();
 		gc.start();

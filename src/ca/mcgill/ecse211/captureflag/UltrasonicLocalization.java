@@ -115,7 +115,7 @@ public class UltrasonicLocalization {
 			deltaTheta = Math.PI / 4.0 - (alphaAngle + betaAngle) / 2.0;
 		}
 
-		odometer.setTheta(odometer.getTheta() + deltaTheta);
+//		odometer.setTheta(odometer.getTheta() + deltaTheta);
 		// System.out.println(deltaTheta);
 		// rotate to face 0 degrees
 		leftMotor.rotate(
@@ -124,6 +124,7 @@ public class UltrasonicLocalization {
 		rightMotor.rotate(
 				CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, deltaTheta * 180 / Math.PI),
 				false);
+		odometer.setTheta(0);
 
 		synchronized (lock) {
 			isLocalizing = true;
