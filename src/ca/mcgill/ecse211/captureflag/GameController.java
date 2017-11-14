@@ -153,9 +153,9 @@ public class GameController extends Thread {
 		flag_zone_y = 0;
 
 		// Ultrasonic localization
-		// usPoller.start();
-		// us.localize();
-		// usPoller.killTask();
+		 usPoller.start();
+		 us.localize();
+		 usPoller.killTask();
 		// End ultrasonic localization
 
 		// check what team you have been assigned to
@@ -166,8 +166,10 @@ public class GameController extends Thread {
 			lp.start();
 			li.cornerLocalization(greenCorner);
 			lp.killTask();
+			
+			
 			// end light localization
-			Button.waitForAnyPress();
+//			Button.waitForAnyPress();
 
 			// green uses zipline and returns on bridge
 
@@ -196,32 +198,43 @@ public class GameController extends Thread {
 			// zip.rotate(-CaptureFlag.convertDistance(CaptureFlag.PULLEY_RADIUS, 12 *
 			// CaptureFlag.TILE_LENGTH), true);
 			nav.travelTo(zc_g_x, zc_g_y);
+//			leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -5), true);
+//			rightMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 5), false);
 			// nav.turnTo(zc_g_x, zc_g_y);
 
 			leftMotor.forward();
 			rightMotor.forward();
 			long milli = System.currentTimeMillis();
-			while (System.currentTimeMillis() - milli < 20000)
+			while (System.currentTimeMillis() - milli < 10000)
 				;
 
 			leftMotor.stop(true);
 			rightMotor.stop(true);
-			zip.stop();
+			milli = System.currentTimeMillis();
+			while (System.currentTimeMillis() - milli < 10000);
+			odo.setX(zc_r_x);
+			odo.setY(zc_r_y);
+			nav.travelTo(zo_r_x, zo_r_y);
+			
+//			zip.stop();
 
 			// should now be about at end of zipline
 			// drive forward a block length
-			leftMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TILE_LENGTH), true);
-			rightMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TILE_LENGTH), false);
 			// localize assuming at zo_r
+			
+			
 			lp.restartTask();
+			
+//			li.afterZipLine();
+			
 			li.do_localization(zo_r_x, zo_r_y);
 			lp.killTask();
 			nav.travelTo(zo_r_x, zo_r_y);
-			Button.waitForAnyPress();
+//			Button.waitForAnyPress();
 
 			// travel to flag region
 			nav.travelTo(sr_ll_x, sr_ll_y);
-			Button.waitForAnyPress();
+//			Button.waitForAnyPress();
 
 			// robot is now on the ground at the end of the zipline
 			// drive to approximately zo-r

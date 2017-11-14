@@ -54,7 +54,7 @@ public class CaptureFlag {
 
 	protected static final double TILE_LENGTH = 30.48;
 
-	private static final String SERVER_IP = "192.168.2.27";
+	private static final String SERVER_IP = "192.168.2.3";
 	protected static final int TEAM_NUMBER = 16;
 	// Enable/disable printing of debug info from the WiFi class
 	private static final boolean ENABLE_DEBUG_WIFI_PRINT = true;

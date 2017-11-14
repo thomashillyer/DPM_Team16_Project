@@ -151,7 +151,7 @@ public class Navigation extends Thread {
 			theta -= Math.PI * 2;
 		}
 
-		theta = theta * 180.0 / Math.PI;
+		theta = Math.toDegrees(theta);
 
 		// turn to the left if angle is negative
 		if (theta < 0) {

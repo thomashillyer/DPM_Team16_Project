@@ -74,6 +74,7 @@ public class LightLocalization {
 		this.rightMotor = rightMotor;
 		this.odometer = odometer;
 		this.nav = nav;
+		Sound.setVolume(85);
 		// syncList[0] = leftMotor;
 		// rightMotor.synchronizeWith(syncList);
 	}
@@ -102,8 +103,13 @@ public class LightLocalization {
 		leftMotor.setSpeed(CaptureFlag.FORWARDSPEED);
 		rightMotor.setSpeed(CaptureFlag.FORWARDSPEED);
 		detectFourLines = true;
-		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true);
-		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), false);
+//		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true);
+//		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), false);
+		leftMotor.forward();
+		rightMotor.backward();
+		while(lineCounter -1 < 3);
+		leftMotor.stop(true);
+		rightMotor.stop();
 		detectFourLines = false;
 
 //		leftMotor.setSpeed(CaptureFlag.FORWARDSPEED);
@@ -165,8 +171,8 @@ public class LightLocalization {
 		odometer.setX(x);
 		odometer.setY(y);
 		odometer.setTheta(odometer.getTheta() + deltaTheta);
-		// if (cornerLocalization)
-		// odometer.setTheta(odometer.getTheta() + deltaTheta);
+//		 if (cornerLocalization)
+//			 odometer.setTheta(odometer.getTheta() + deltaTheta);
 
 		// once the odometer is corrected, we can then navigate to (0 , 0) with our
 		// previous method
@@ -195,10 +201,9 @@ public class LightLocalization {
 		oldValue = value;
 		if (diff < derivativeThreshold && filterCounter == 0) {
 			filterCounter++;
-			Sound.beep();
 			if (detectFourLines) {
 				lineCounter++;
-
+				Sound.beep();
 				if (lineCounter - 1 < 4)
 					lines[lineCounter - 1] = odometer.getTheta();
 
@@ -273,7 +278,7 @@ public class LightLocalization {
 
 		// correctOdometer(0);
 		nav.travelTo(0, 0);
-		nav.turn(-(odometer.getTheta()));
+		nav.turn(-(odometer.getTheta()+Math.toRadians(8)));
 
 		if (corner == 0) {
 			odometer.setX(CaptureFlag.TILE_LENGTH);
@@ -480,8 +485,8 @@ public class LightLocalization {
 	}
 
 	protected void afterZipLine() {
-		leftMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TILE_LENGTH), true);
-		rightMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TILE_LENGTH), false);
+		leftMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TILE_LENGTH/2), true);
+		rightMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TILE_LENGTH/2), false);
 		detectSingleLine = true;
 		while (detectSingleLine) {
 			rightMotor.forward();
@@ -489,6 +494,5 @@ public class LightLocalization {
 		}
 		rightMotor.rotate(-CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, 1.15 * CaptureFlag.BOT_LENGTH), true);
 		leftMotor.rotate(-CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, 1.15 * CaptureFlag.BOT_LENGTH), false);
-		do_localization(2, 7);
 	}
 }
