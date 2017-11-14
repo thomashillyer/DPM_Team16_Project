@@ -191,57 +191,56 @@ public class GameController extends Thread {
 			// traverse zipline
 			// travel to start of zipline
 			zip.setSpeed(400);
-			
-			//zip.rotate(-CaptureFlag.convertDistance(CaptureFlag.PULLEY_RADIUS, 12 * CaptureFlag.TILE_LENGTH), true);
-			//nav.travelTo(zc_g_x, zc_g_y);
-			nav.turnTo(zc_g_x, zc_g_y);
+
+			zip.backward();
+			// zip.rotate(-CaptureFlag.convertDistance(CaptureFlag.PULLEY_RADIUS, 12 *
+			// CaptureFlag.TILE_LENGTH), true);
+			nav.travelTo(zc_g_x, zc_g_y);
+			// nav.turnTo(zc_g_x, zc_g_y);
 
 			leftMotor.forward();
 			rightMotor.forward();
-			zip.backward();
 			long milli = System.currentTimeMillis();
-			while(System.currentTimeMillis() - milli < 20000);
-			
+			while (System.currentTimeMillis() - milli < 20000)
+				;
+
 			leftMotor.stop(true);
 			rightMotor.stop(true);
 			zip.stop();
-			
-			
-			// temp
-			// lp.restartTask();
-			// li.do_localization(zc_g_x, zc_g_y); // dont pass a point because it assumes
-			// its close to the point it should
-			// // be
-			// lp.killTask();
-			// nav.travelTo(zc_g_x, zc_g_y);
-			// nav.travelTo(2, 2);
-			//
-			// Button.waitForAnyPress();
-			// get onto zipline and start zip motor
-			leftMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, 6 * CaptureFlag.TILE_LENGTH), true);
-			rightMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, 6 * CaptureFlag.TILE_LENGTH),
-					false);
-			odo.setX(zc_r_x * CaptureFlag.TILE_LENGTH);
-			odo.setY(zc_r_y * CaptureFlag.TILE_LENGTH);
-			// end traverse zipline
+
+			// should now be about at end of zipline
+			// drive forward a block length
+			leftMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TILE_LENGTH), true);
+			rightMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TILE_LENGTH), false);
+			// localize assuming at zo_r
+			lp.restartTask();
+			li.do_localization(zo_r_x, zo_r_y);
+			lp.killTask();
+			nav.travelTo(zo_r_x, zo_r_y);
+			Button.waitForAnyPress();
+
+			// travel to flag region
+			nav.travelTo(sr_ll_x, sr_ll_y);
 			Button.waitForAnyPress();
 
 			// robot is now on the ground at the end of the zipline
 			// drive to approximately zo-r
-			leftMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TILE_LENGTH), true);
-			rightMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TILE_LENGTH), false);
-
-			// localize at point after zipline
-			lp.restartTask();
-			li.do_localization(zo_r_x, zo_r_y);
-			lp.killTask();
-			// odo.setX(zo_r_x * CaptureFlag.TILE_LENGTH);
-			// odo.setY(zo_r_y * CaptureFlag.TILE_LENGTH);
-			// end localize at point after zipline
-
-			// navigate to flag region
-			calculateSearchRegionPoint();
-			nav.travelTo(flag_zone_x, flag_zone_y);
+			// leftMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS,
+			// CaptureFlag.TILE_LENGTH), true);
+			// rightMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS,
+			// CaptureFlag.TILE_LENGTH), false);
+			//
+			// // localize at point after zipline
+			// lp.restartTask();
+			// li.do_localization(zo_r_x, zo_r_y);
+			// lp.killTask();
+			// // odo.setX(zo_r_x * CaptureFlag.TILE_LENGTH);
+			// // odo.setY(zo_r_y * CaptureFlag.TILE_LENGTH);
+			// // end localize at point after zipline
+			//
+			// // navigate to flag region
+			// calculateSearchRegionPoint();
+			// nav.travelTo(flag_zone_x, flag_zone_y);
 			// search for flag - not needed for beta demo
 			// flag.findFlag(); // TODO needs a lot of work
 			// end search for flag
