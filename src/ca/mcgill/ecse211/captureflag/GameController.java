@@ -205,13 +205,13 @@ public class GameController extends Thread {
 			leftMotor.forward();
 			rightMotor.forward();
 			long milli = System.currentTimeMillis();
-			while (System.currentTimeMillis() - milli < 10000)
+			while (System.currentTimeMillis() - milli < 6000)
 				;
 
 			leftMotor.stop(true);
 			rightMotor.stop(true);
 			milli = System.currentTimeMillis();
-			while (System.currentTimeMillis() - milli < 10000);
+			while (System.currentTimeMillis() - milli < 8000);
 			odo.setX(zc_r_x);
 			odo.setY(zc_r_y);
 			nav.travelTo(zo_r_x, zo_r_y);

@@ -87,9 +87,9 @@ public class LightLocalization {
 		lineCounter = 0;
 		lines = new double[4];
 
-		leftMotor.stop();
+//		leftMotor.stop();
 		leftMotor.setAcceleration(CaptureFlag.ACCELERATION);
-		rightMotor.stop();
+//		rightMotor.stop();
 		rightMotor.setAcceleration(CaptureFlag.ACCELERATION);
 
 		// before starting the light sensor correction
@@ -103,13 +103,13 @@ public class LightLocalization {
 		leftMotor.setSpeed(CaptureFlag.FORWARDSPEED);
 		rightMotor.setSpeed(CaptureFlag.FORWARDSPEED);
 		detectFourLines = true;
-//		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true);
-//		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), false);
-		leftMotor.forward();
-		rightMotor.backward();
-		while(lineCounter -1 < 3);
-		leftMotor.stop(true);
-		rightMotor.stop();
+		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 375), true);
+		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 375), false);
+//		leftMotor.forward();
+//		rightMotor.backward();
+//		while(lineCounter -1 < 3);
+//		leftMotor.stop(true);
+//		rightMotor.stop();
 		detectFourLines = false;
 
 //		leftMotor.setSpeed(CaptureFlag.FORWARDSPEED);
@@ -278,7 +278,7 @@ public class LightLocalization {
 
 		// correctOdometer(0);
 		nav.travelTo(0, 0);
-		nav.turn(-(odometer.getTheta()+Math.toRadians(8)));
+		nav.turn(-(odometer.getTheta()+Math.toRadians(5)));
 
 		if (corner == 0) {
 			odometer.setX(CaptureFlag.TILE_LENGTH);

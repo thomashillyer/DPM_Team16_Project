@@ -24,12 +24,18 @@ public class UltrasonicLocalization {
 	private int filterControl;
 	private static final int FILTER_OUT = 10;
 	private int counter = 0;
+	
+	private int risingCounter = 0;
 
 	private Odometer odometer;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
 
 	private Object lock = new Object();
-
+	
+	private double fallingTheta;
+	private double risingTheta;
+	private boolean detectRaisingEdge = false;
+	
 	private volatile boolean isLocalizing = false;
 
 	private boolean fallingEdgeDetected = false;
@@ -79,7 +85,98 @@ public class UltrasonicLocalization {
 		leftMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
 		rightMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
 
+		fallingEdge();
 		// rotate 360 degrees to scan walls
+		
+	}
+
+	public int readUSDistance() {
+		return this.distanceUS;
+	}
+
+	/**
+	 * Filter any extraneous distances returned by the sensor
+	 * 
+	 * @param distance
+	 *            the distance recorded by the US sensor
+	 */
+	public void processUSData(int distance) {
+		this.previousDistance = this.distanceUS;
+		if (betaAngle != 0.0) {
+			distance = 255;
+		} else {
+
+			// if (distance >= 255 && filterControl < FILTER_OUT) {
+			// // bad value, do not set the distance var, however do increment
+			// // the
+			// // filter value
+			// filterControl++;
+			// } else if (distance >= 255) {
+			if (distance >= 255) {
+				// We have repeated large values, so there must actually be
+				// nothing
+				// there: leave the distance alone
+				this.distanceUS = 255;
+			} else {
+				// distance went below 255: reset filter and leave
+				// distance alone.
+				filterControl = 0;
+
+				this.distanceUS = distance;
+
+			}
+		}
+	}
+
+	protected boolean isLocalizing() {
+		boolean result;
+		synchronized (lock) {
+			result = this.isLocalizing;
+		}
+		return result;
+	}
+	
+	private void risingEdge() {
+		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true);
+		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true);
+
+		// detect falling and rising edge, calculate the angle by which the
+		// robot should turn to face north
+		detectFallingAndRisingEdge();
+
+		// turn the robot by the angle by which it will make it head north
+		rightMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, deltaTheta * 180.0 / Math.PI), true);
+		leftMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, deltaTheta * 180.0 / Math.PI), false);
+	}
+	
+	private void detectFallingAndRisingEdge() {
+		
+		// As long as the robot is moving, don't leave this loop
+		while (leftMotor.isMoving() && rightMotor.isMoving()) {
+
+			if ((this.distanceUS >= HORIZONTAL_CONST - HORIZONTAL_MARGIN) && detectRaisingEdge == false && risingCounter == 0) {
+				detectRaisingEdge = true;
+				risingTheta = odometer.getTheta();
+				risingCounter++;
+				Sound.beep();
+			} else if (this.distanceUS < HORIZONTAL_CONST + HORIZONTAL_MARGIN && detectRaisingEdge == true && risingCounter == 1) {
+				detectRaisingEdge = false;
+				fallingTheta = odometer.getTheta();
+				risingCounter++;
+				Sound.beep();
+			}
+		}
+
+		if (fallingTheta < risingTheta) {
+			deltaTheta = (5.0 * Math.PI / 4.0) - (fallingTheta + risingTheta) / 2.0;
+		} else {
+			deltaTheta = (Math.PI / 4.0) - (fallingTheta + risingTheta) / 2.0;
+		}
+
+		odometer.setTheta(odometer.getTheta() + deltaTheta);
+	}
+	
+	private void fallingEdge() {
 		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true);
 		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true);
 
@@ -129,51 +226,5 @@ public class UltrasonicLocalization {
 		synchronized (lock) {
 			isLocalizing = true;
 		}
-	}
-
-	public int readUSDistance() {
-		return this.distanceUS;
-	}
-
-	/**
-	 * Filter any extraneous distances returned by the sensor
-	 * 
-	 * @param distance
-	 *            the distance recorded by the US sensor
-	 */
-	public void processUSData(int distance) {
-		this.previousDistance = this.distanceUS;
-		if (betaAngle != 0.0) {
-			distance = 255;
-		} else {
-
-			// if (distance >= 255 && filterControl < FILTER_OUT) {
-			// // bad value, do not set the distance var, however do increment
-			// // the
-			// // filter value
-			// filterControl++;
-			// } else if (distance >= 255) {
-			if (distance >= 255) {
-				// We have repeated large values, so there must actually be
-				// nothing
-				// there: leave the distance alone
-				this.distanceUS = 255;
-			} else {
-				// distance went below 255: reset filter and leave
-				// distance alone.
-				filterControl = 0;
-
-				this.distanceUS = distance;
-
-			}
-		}
-	}
-
-	protected boolean isLocalizing() {
-		boolean result;
-		synchronized (lock) {
-			result = this.isLocalizing;
-		}
-		return result;
 	}
 }
