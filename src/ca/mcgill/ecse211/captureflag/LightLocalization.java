@@ -255,7 +255,7 @@ public class LightLocalization {
 		// // rightMotor.stop();
 		// rightMotor.setAcceleration(CaptureFlag.ACCELERATION);
 		//
-		// Adjust the robot position, before it starts to rotate to ensure that
+		// Adjust the robot position, before it starts to rotpate to ensure that
 		// the light sensor will cross 4 black lines
 		adjustRobotStartingPosition();
 		//
@@ -278,7 +278,7 @@ public class LightLocalization {
 
 		// correctOdometer(0);
 		nav.travelTo(0, 0);
-		nav.turn(-(odometer.getTheta()+Math.toRadians(8)));
+		nav.turn(-(odometer.getTheta() + Math.toRadians(5)));
 
 		if (corner == 0) {
 			odometer.setX(CaptureFlag.TILE_LENGTH);

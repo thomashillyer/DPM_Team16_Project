@@ -167,7 +167,7 @@ public class GameController extends Thread {
 			li.cornerLocalization(greenCorner);
 			lp.killTask();
 			
-			
+			Button.waitForAnyPress();
 			// end light localization
 //			Button.waitForAnyPress();
 
