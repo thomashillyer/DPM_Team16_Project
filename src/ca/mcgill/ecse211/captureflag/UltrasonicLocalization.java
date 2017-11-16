@@ -127,7 +127,10 @@ public class UltrasonicLocalization {
 			}
 		}
 	}
-
+/**
+ * 
+ * @return a boolean indicating if the robot is in ultrasonic localization
+ */
 	protected boolean isLocalizing() {
 		boolean result;
 		synchronized (lock) {
@@ -136,46 +139,48 @@ public class UltrasonicLocalization {
 		return result;
 	}
 	
+	/**
+	 * Calculates a correction angle based on a rising edge formula. This method of localization is preferred if the robot is facing a wall.
+	 */
 	private void risingEdge() {
 		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true);
 		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true);
 
 		// detect falling and rising edge, calculate the angle by which the
 		// robot should turn to face north
-		detectFallingAndRisingEdge();
+		// As long as the robot is moving, don't leave this loop
+				while (leftMotor.isMoving() && rightMotor.isMoving()) {
+
+					if ((this.distanceUS >= HORIZONTAL_CONST - HORIZONTAL_MARGIN) && detectRaisingEdge == false && risingCounter == 0) {
+						detectRaisingEdge = true;
+						risingTheta = odometer.getTheta();
+						risingCounter++;
+						Sound.beep();
+					} else if (this.distanceUS < HORIZONTAL_CONST + HORIZONTAL_MARGIN && detectRaisingEdge == true && risingCounter == 1) {
+						detectRaisingEdge = false;
+						fallingTheta = odometer.getTheta();
+						risingCounter++;
+						Sound.beep();
+					}
+				}
+
+				if (fallingTheta < risingTheta) {
+					deltaTheta = (5.0 * Math.PI / 4.0) - (fallingTheta + risingTheta) / 2.0;
+				} else {
+					deltaTheta = (Math.PI / 4.0) - (fallingTheta + risingTheta) / 2.0;
+				}
+
+				odometer.setTheta(odometer.getTheta() + deltaTheta);
 
 		// turn the robot by the angle by which it will make it head north
 		rightMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, deltaTheta * 180.0 / Math.PI), true);
 		leftMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, deltaTheta * 180.0 / Math.PI), false);
 	}
 	
-	private void detectFallingAndRisingEdge() {
-		
-		// As long as the robot is moving, don't leave this loop
-		while (leftMotor.isMoving() && rightMotor.isMoving()) {
-
-			if ((this.distanceUS >= HORIZONTAL_CONST - HORIZONTAL_MARGIN) && detectRaisingEdge == false && risingCounter == 0) {
-				detectRaisingEdge = true;
-				risingTheta = odometer.getTheta();
-				risingCounter++;
-				Sound.beep();
-			} else if (this.distanceUS < HORIZONTAL_CONST + HORIZONTAL_MARGIN && detectRaisingEdge == true && risingCounter == 1) {
-				detectRaisingEdge = false;
-				fallingTheta = odometer.getTheta();
-				risingCounter++;
-				Sound.beep();
-			}
-		}
-
-		if (fallingTheta < risingTheta) {
-			deltaTheta = (5.0 * Math.PI / 4.0) - (fallingTheta + risingTheta) / 2.0;
-		} else {
-			deltaTheta = (Math.PI / 4.0) - (fallingTheta + risingTheta) / 2.0;
-		}
-
-		odometer.setTheta(odometer.getTheta() + deltaTheta);
-	}
 	
+/**
+ * Calculates a correction angle based on a falling edge formula. This method of localization is preferred if the robot is facing away from a wall.
+ */
 	private void fallingEdge() {
 		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true);
 		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true);
@@ -212,8 +217,6 @@ public class UltrasonicLocalization {
 			deltaTheta = Math.PI / 4.0 - (alphaAngle + betaAngle) / 2.0;
 		}
 
-//		odometer.setTheta(odometer.getTheta() + deltaTheta);
-		// System.out.println(deltaTheta);
 		// rotate to face 0 degrees
 		leftMotor.rotate(
 				-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, deltaTheta * 180 / Math.PI),

@@ -111,46 +111,13 @@ public class CaptureFlag {
 		GameController gc = new GameController(rightMotor, leftMotor, sensorMotor, odometer, lightLocal, usLocal, lp,
 				usPoller, nav, conn, flag);
 
-		// TODO remove the switch case as it will not be used for the final project.
-		// Could maybe stay for testing purposes.
-		// switch (option) {
-		// case Button.ID_LEFT:
-		// odometer.start();
-		// // usPoller.start();
-		// odoDispl.start();
-		// // screen.clear();
-		// // usLocal.start();
-		// // lightLocal.start();
-		// // lp.start();
-		// gc.start();
-		// t.clear();
-		// break;
-		// case Button.ID_RIGHT:
-		// // UltrasonicPoller usPoll = new UltrasonicPoller(usSensor, usData, usLocal);
-		// // odometer.start();
-		// // usPoll.start();
-		// // odoDispl.start();
-		// // screen.clear();
-		// // usLocal.start();
-		// // Button.waitForAnyPress();
-		// // lightLocal.start();
-		// break;
-		// default:
-		// System.out.println("Error - invalid button"); // None of the above - abort
-		// System.exit(-1);
-		// break;
-		// }
-
-		// dont start until button pressed
-//		Button.waitForAnyPress();
 		odometer.start();
 		odoDispl.start();
 		gc.start();
 		t.clear();
 
 		// escape at any point during program execution if escape button is pressed
-		while (Button.waitForAnyPress() != Button.ID_ESCAPE)
-			;
+		while (Button.waitForAnyPress() != Button.ID_ESCAPE);
 		System.exit(0);
 	}
 
@@ -164,34 +131,34 @@ public class CaptureFlag {
 		t.clear();
 		int counter = 0;
 
-		// x0 = printXY("X0: ", 0, 0);
-		// y0 = printXY("Y0: ", 0, 1);
-		// xC = printXY("XC: ", 0, 2);
-		// yC = printXY("YC: ", 0, 3);
+		 x0 = printXY("X0: ", 0, 0);
+		 y0 = printXY("Y0: ", 0, 1);
+		 xC = printXY("XC: ", 0, 2);
+		 yC = printXY("YC: ", 0, 3);
 
-		// enter = false;
-		// counter = 0;
-		// t.drawString("Corner: ", 0, 4);
-		// while (!enter) {
-		// int buttonPressed = Button.waitForAnyPress();
-		// if (buttonPressed != Button.ID_ENTER) {
-		// if (buttonPressed == Button.ID_DOWN && counter == 0) {
-		// counter = 0;
-		// } else if (buttonPressed == Button.ID_DOWN && counter > 0) {
-		// counter--;
-		// } else if (buttonPressed == Button.ID_UP && counter == 3) {
-		// counter = 3;
-		// } else if (buttonPressed == Button.ID_UP && counter < 3) {
-		// counter++;
-		// }
-		// t.drawInt(counter, 8, 4);
-		// } else {
-		// corner = counter;
-		// enter = true;
-		// }
-		// }
-		//
-		// t.clear(); // the screen at initialization
+		 enter = false;
+		 counter = 0;
+		 t.drawString("Corner: ", 0, 4);
+		 while (!enter) {
+		 int buttonPressed = Button.waitForAnyPress();
+		 if (buttonPressed != Button.ID_ENTER) {
+		 if (buttonPressed == Button.ID_DOWN && counter == 0) {
+		 counter = 0;
+		 } else if (buttonPressed == Button.ID_DOWN && counter > 0) {
+		 counter--;
+		 } else if (buttonPressed == Button.ID_UP && counter == 3) {
+		 counter = 3;
+		 } else if (buttonPressed == Button.ID_UP && counter < 3) {
+		 counter++;
+		 }
+		 t.drawInt(counter, 8, 4);
+		 } else {
+		 corner = counter;
+		 enter = true;
+		 }
+		 }
+		
+		 t.clear(); // the screen at initialization
 		t.drawString("left/right = start", 0, 0);
 		// t.drawString("right = risingEdge", 0, 1);
 	}

@@ -166,36 +166,36 @@ public class Navigation extends Thread {
 		// rightMotor.endSynchronization();
 	}
 	
-	protected void turn2(double theta, boolean stop) {
-//		isNavigating = true;
-		
-		double thetaTwo =  theta- Math.toDegrees(odometer.getTheta());
-		
-		if(thetaTwo > 180){
-			thetaTwo -= 360;
-			
-		}
-		else if(thetaTwo<=-180){
-			thetaTwo += 360;
-		}
-		
-		leftMotor.setSpeed(CaptureFlag.FORWARDSPEED);
-		rightMotor.setSpeed(CaptureFlag.FORWARDSPEED);
-
-		
-		
-		//minimumAngle negative, turn left
-		if(thetaTwo < 0) { 
-			leftMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -thetaTwo), true);
-			rightMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -thetaTwo), false);
-		} else { //minimumAngle positive, turn right
-			leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, thetaTwo), true);
-			rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, thetaTwo), false);
-		}
-		
-//		if(stop) {
-//			stop_motors();
-//			isNavigating = false;
+//	protected void turn2(double theta, boolean stop) {
+////		isNavigating = true;
+//		
+//		double thetaTwo =  theta- Math.toDegrees(odometer.getTheta());
+//		
+//		if(thetaTwo > 180){
+//			thetaTwo -= 360;
+//			
 //		}
-	}
+//		else if(thetaTwo<=-180){
+//			thetaTwo += 360;
+//		}
+//		
+//		leftMotor.setSpeed(CaptureFlag.FORWARDSPEED);
+//		rightMotor.setSpeed(CaptureFlag.FORWARDSPEED);
+//
+//		
+//		
+//		//minimumAngle negative, turn left
+//		if(thetaTwo < 0) { 
+//			leftMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -thetaTwo), true);
+//			rightMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -thetaTwo), false);
+//		} else { //minimumAngle positive, turn right
+//			leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, thetaTwo), true);
+//			rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, thetaTwo), false);
+//		}
+//		
+////		if(stop) {
+////			stop_motors();
+////			isNavigating = false;
+////		}
+//	}
 }
