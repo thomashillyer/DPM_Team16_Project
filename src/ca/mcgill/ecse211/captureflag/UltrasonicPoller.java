@@ -32,6 +32,7 @@ public class UltrasonicPoller extends Thread {
 				}
 
 				if (flag.isFlagDetecting()) {
+					System.out.println("here");
 					flag.processUSData(distance);
 				}
 

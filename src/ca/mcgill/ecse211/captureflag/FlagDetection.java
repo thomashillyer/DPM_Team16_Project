@@ -1,6 +1,7 @@
 package ca.mcgill.ecse211.captureflag;
 
 import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +41,8 @@ public class FlagDetection {
 			// filter ultrasonic sensor data
 			currentDistance = CaptureFlag.filter(distance);
 			// previousTheta;
+			Sound.beep();
+			Sound.beep();
 
 			double RANGE_SAFETY_SCALE = 1.5;
 			// calculated by using the diagonal of a block placed at the far corner of a
@@ -49,6 +52,8 @@ public class FlagDetection {
 
 			// within the two blocks.
 			if (currentDistance < RANGE_SAFETY_SCALE * Math.sqrt(2) * CaptureFlag.TILE_LENGTH) {
+				
+				Sound.buzz();
 
 				// falling edge
 				if (currentDistance < previousDistance) {
@@ -149,16 +154,35 @@ public class FlagDetection {
 
 		// TODO fix travelling to flags and implement logic to check colour of flag
 		for (Point2D.Double p : points) {
+			
 
 			System.out.println(OdometryDisplay.formattedDoubleToString(p.getX(), 3) + " , "
 					+ OdometryDisplay.formattedDoubleToString(p.getY(), 3));
-			nav.travelTo(p.getX() - 10, p.getY() - 10);
 
-			// should reverse back to the original point
-			leftMotor.rotate(-CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, CaptureFlag.BOT_LENGTH), true);
-			rightMotor.rotate(-CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, CaptureFlag.BOT_LENGTH), false);
+			travelToFlag(p);
+			checkFlagColour();
+			travelBackFromFlag();
+
 		}
 
+	}
+
+	private void checkFlagColour() {
+		// TODO Auto-generated method stub
+		System.out.println("checking flag colour method");
+		
+	}
+
+	private void travelBackFromFlag() {
+		// should reverse back to the original point
+		leftMotor.rotate(-CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, CaptureFlag.BOT_LENGTH), true);
+		rightMotor.rotate(-CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, CaptureFlag.BOT_LENGTH), false);
+		
+	}
+
+	private void travelToFlag(Point2D.Double p) {
+
+		nav.travelTo(p.getX() - 10, p.getY() - 10);
 	}
 
 	/**
