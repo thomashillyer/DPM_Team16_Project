@@ -169,7 +169,7 @@ public class GameController extends Thread {
 		// calculateSearchRegionPoint();
 		// nav.travelTo(flag_zone_x, flag_zone_y);
 		// search for flag - not needed for beta demo
-		 flag.findFlag(); // TODO needs a lot of work
+		//flag.findFlag(); // TODO needs a lot of work
 		// end search for flag
 
 		// TODO after beta add logic for bridge traversal etc
