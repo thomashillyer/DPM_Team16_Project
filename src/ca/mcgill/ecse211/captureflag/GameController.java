@@ -138,197 +138,42 @@ public class GameController extends Thread {
 	 */
 	@SuppressWarnings("rawtypes")
 	public void run() {
-		// --------Integration---------
 		// directly updates the variables in GameController with the values from the
 		// server
-		getDataFromServer();
-
-		// calculate length of zipline
-		double zip_x = Math.abs(zc_g_x - zc_r_x) * CaptureFlag.TILE_LENGTH;
-		double zip_y = Math.abs(zc_g_y - zc_r_y) * CaptureFlag.TILE_LENGTH;
-		// 1.3 is a safety factor
-		double zipLength = 1.3 * Math.sqrt(Math.pow(zip_x, 2) + Math.pow(zip_y, 2));
+		// getDataFromServer();
 
 		flag_zone_x = 0;
 		flag_zone_y = 0;
+		
+		usPoller.start();
+		flag.findFlag();
+		usPoller.killTask();
+		
 
-		// Ultrasonic localization
-		 usPoller.start();
-		 us.localize();
-		 usPoller.killTask();
-		// End ultrasonic localization
-
-		// check what team you have been assigned to
-		if (greenTeam == CaptureFlag.TEAM_NUMBER) {
-			System.out.println("green team corner " + greenCorner);
-			assignedGreen = true;
-			// Light localization
-			lp.start();
-			li.cornerLocalization(greenCorner);
-			lp.killTask();
-			
-			
-			// end light localization
-//			Button.waitForAnyPress();
-
-			// green uses zipline and returns on bridge
-
-			// travel to point before zipline
-			// zc_g is zipline start
-			// zo_g is point before
-			// zc_r is zipline end
-			// zo_r is point after
-			nav.travelTo(zo_g_x, zo_g_y);
-
-			// anypoint light localize
-			lp.restartTask();
-			li.do_localization(zo_g_x, zo_g_y); // dont pass a point because it assumes its close to the point it should
-			lp.killTask();
-			nav.travelTo(zo_g_x, zo_g_y);
-			// set x and y to point before the ramp
-			// odo.setX(zo_g_x * CaptureFlag.TILE_LENGTH);
-			// odo.setY(zo_g_y * CaptureFlag.TILE_LENGTH);
-			// end anypoint light localize
-
-			// traverse zipline
-			// travel to start of zipline
-			zip.setSpeed(400);
-
-			zip.backward();
-			// zip.rotate(-CaptureFlag.convertDistance(CaptureFlag.PULLEY_RADIUS, 12 *
-			// CaptureFlag.TILE_LENGTH), true);
-			nav.travelTo(zc_g_x, zc_g_y);
-//			leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -5), true);
-//			rightMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 5), false);
-			// nav.turnTo(zc_g_x, zc_g_y);
-
-			leftMotor.forward();
-			rightMotor.forward();
-			long milli = System.currentTimeMillis();
-			while (System.currentTimeMillis() - milli < 10000)
-				;
-
-			leftMotor.stop(true);
-			rightMotor.stop(true);
-			milli = System.currentTimeMillis();
-			while (System.currentTimeMillis() - milli < 10000);
-			odo.setX(zc_r_x);
-			odo.setY(zc_r_y);
-			nav.travelTo(zo_r_x, zo_r_y);
-			
-//			zip.stop();
-
-			// should now be about at end of zipline
-			// drive forward a block length
-			// localize assuming at zo_r
-			
-			
-			lp.restartTask();
-			
-//			li.afterZipLine();
-			
-			li.do_localization(zo_r_x, zo_r_y);
-			lp.killTask();
-			nav.travelTo(zo_r_x, zo_r_y);
-//			Button.waitForAnyPress();
-
-			// travel to flag region
-			nav.travelTo(sr_ll_x, sr_ll_y);
-//			Button.waitForAnyPress();
-
-			// robot is now on the ground at the end of the zipline
-			// drive to approximately zo-r
-			// leftMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS,
-			// CaptureFlag.TILE_LENGTH), true);
-			// rightMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS,
-			// CaptureFlag.TILE_LENGTH), false);
-			//
-			// // localize at point after zipline
-			// lp.restartTask();
-			// li.do_localization(zo_r_x, zo_r_y);
-			// lp.killTask();
-			// // odo.setX(zo_r_x * CaptureFlag.TILE_LENGTH);
-			// // odo.setY(zo_r_y * CaptureFlag.TILE_LENGTH);
-			// // end localize at point after zipline
-			//
-			// // navigate to flag region
-			// calculateSearchRegionPoint();
-			// nav.travelTo(flag_zone_x, flag_zone_y);
-			// search for flag - not needed for beta demo
-			// flag.findFlag(); // TODO needs a lot of work
-			// end search for flag
-
-			// TODO after beta add logic for bridge traversal etc
-
-		} else if (redTeam == CaptureFlag.TEAM_NUMBER) {
-			assignedGreen = false;
-
-			// Light localization
-			lp.start();
-			li.cornerLocalization(redCorner);
-			lp.killTask();
-			// end light localization
-
-			// red uses bridge and returns over water
-
-			// TODO the rest
-
-		}
-		// ------END Integration-------
-		/* eric code */
+		// robot is now on the ground at the end of the zipline
+		// drive to approximately zo-r
+		// leftMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS,
+		// CaptureFlag.TILE_LENGTH), true);
+		// rightMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS,
+		// CaptureFlag.TILE_LENGTH), false);
 		//
-		//
-		// lp.start();
-		// li.cornerLocalization(0);
-		// lp.killTask();
-		//
-		// nav.travelTo(2, 1);
-		////
-		//// Button.waitForAnyPress();
+		// // localize at point after zipline
 		// lp.restartTask();
-		// li.do_localization(2, 1);
+		// li.do_localization(zo_r_x, zo_r_y);
 		// lp.killTask();
-		// //Button.waitForAnyPress();
-		// nav.travelTo(2, 1);
+		// // odo.setX(zo_r_x * CaptureFlag.TILE_LENGTH);
+		// // odo.setY(zo_r_y * CaptureFlag.TILE_LENGTH);
+		// // end localize at point after zipline
 		//
-		//
-		// nav.travelTo(2, 2);
-		//
-		// lp.killTask();
-		//
-		// leftMotor.forward();
-		// rightMotor.forward();
-		// zip.setSpeed(150);
-		// zip.backward();
-		// //time
-		// lp.restartTask();
-		// li.afterZipLine();
-		//
-		//
-		//
-		//
-		//// nav.turn2(45,true);
-		//
-		//// lp.restartTask();
-		//// li.do_localization(2, 2);
-		//// lp.killTask();
-		////
-		//// nav.travelTo(2, 2);
-		////
-		////
-		//// nav.travelTo(3, 1);
-		//
-		//// nav.turn2(45,true);
-		//
-		//// lp.restartTask();
-		//// li.do_localization(3, 1);
-		//// lp.killTask();
-		////
-		//// nav.travelTo(3, 1);
-		//// nav.turn2(45,true);
-		//// lp.restartTask();
-		//// li.anyPointLocalization();
-		//// lp.killTask();
+		// // navigate to flag region
+		// calculateSearchRegionPoint();
+		// nav.travelTo(flag_zone_x, flag_zone_y);
+		// search for flag - not needed for beta demo
+		 flag.findFlag(); // TODO needs a lot of work
+		// end search for flag
+
+		// TODO after beta add logic for bridge traversal etc
+
 	}
 
 	/**
