@@ -182,7 +182,7 @@ public class GameController extends Thread {
 
 			// anypoint light localize
 			lp.restartTask();
-			li.do_localization(zo_g_x, zo_g_y); // dont pass a point because it assumes its close to the point it should
+			li.anyPointLocalization(zo_g_x, zo_g_y); // dont pass a point because it assumes its close to the point it should
 			lp.killTask();
 			nav.travelTo(zo_g_x, zo_g_y);
 			// set x and y to point before the ramp
@@ -205,13 +205,13 @@ public class GameController extends Thread {
 			leftMotor.forward();
 			rightMotor.forward();
 			long milli = System.currentTimeMillis();
-			while (System.currentTimeMillis() - milli < 10000)
+			while (System.currentTimeMillis() - milli < 6000)
 				;
 
 			leftMotor.stop(true);
 			rightMotor.stop(true);
 			milli = System.currentTimeMillis();
-			while (System.currentTimeMillis() - milli < 10000);
+			while (System.currentTimeMillis() - milli < 8000);
 			odo.setX(zc_r_x);
 			odo.setY(zc_r_y);
 			nav.travelTo(zo_r_x, zo_r_y);
@@ -227,7 +227,7 @@ public class GameController extends Thread {
 			
 //			li.afterZipLine();
 			
-			li.do_localization(zo_r_x, zo_r_y);
+			li.anyPointLocalization(zo_r_x, zo_r_y);
 			lp.killTask();
 			nav.travelTo(zo_r_x, zo_r_y);
 //			Button.waitForAnyPress();
