@@ -260,6 +260,29 @@ public class GameController extends Thread {
 
 			// TODO after beta add logic for bridge traversal etc
 
+			
+			//bridge logic
+            //travel to lower left coordinates at entrance of bridge and localize
+            nav.travelTo(sh_ll_x, sh_ll_y); 
+            lp.restartTask();
+            li.anyPointLocalization(sh_ll_x, sh_ll_y); 
+            lp.killTask();
+            nav.travelTo(sh_ll_x, sh_ll_y);
+            
+            
+            nav.crossBridge(sh_ll_x, sh_ll_y, sh_ur_x, sh_ur_y, sv_ll_x, sv_ll_y);
+                    
+            
+            //travel to the lower left exit of the bridge and relocalize
+            nav.travelTo(sv_ll_x, sv_ll_y);
+            lp.restartTask();
+            li.anyPointLocalization(sv_ll_x, sv_ll_y);
+            lp.killTask();
+            nav.travelTo(sv_ll_x, sv_ll_y);
+            
+            //travel back to base
+            //might need to retain the value of the corner coordinates at corner localization to have to travel back to?
+            
 		} else if (redTeam == CaptureFlag.TEAM_NUMBER) {
 			assignedGreen = false;
 
@@ -272,63 +295,30 @@ public class GameController extends Thread {
 			// red uses bridge and returns over water
 
 			// TODO the rest
+			
+			//bridge logic
+			//travel to lower left coordinates at entrance of bridge and localize
+			nav.travelTo(sh_ll_x, sh_ll_y); 
+			lp.restartTask();
+            li.anyPointLocalization(sh_ll_x, sh_ll_y); 
+            lp.killTask();
+            nav.travelTo(sh_ll_x, sh_ll_y);
+            
+            
+            nav.crossBridge(sh_ll_x, sh_ll_y, sh_ur_x, sh_ur_y, sv_ll_x, sv_ll_y);
+					
+			
+			//travel to the lower left exit of the bridge and relocalize
+			nav.travelTo(sv_ll_x, sv_ll_y);
+            lp.restartTask();
+            li.anyPointLocalization(sv_ll_x, sv_ll_y);
+            lp.killTask();
+            nav.travelTo(sv_ll_x, sv_ll_y);
 
+            //now travel to flag coords
+            
 		}
-		// ------END Integration-------
-		/* eric code */
-		//
-		//
-		// lp.start();
-		// li.cornerLocalization(0);
-		// lp.killTask();
-		//
-		// nav.travelTo(2, 1);
-		////
-		//// Button.waitForAnyPress();
-		// lp.restartTask();
-		// li.do_localization(2, 1);
-		// lp.killTask();
-		// //Button.waitForAnyPress();
-		// nav.travelTo(2, 1);
-		//
-		//
-		// nav.travelTo(2, 2);
-		//
-		// lp.killTask();
-		//
-		// leftMotor.forward();
-		// rightMotor.forward();
-		// zip.setSpeed(150);
-		// zip.backward();
-		// //time
-		// lp.restartTask();
-		// li.afterZipLine();
-		//
-		//
-		//
-		//
-		//// nav.turn2(45,true);
-		//
-		//// lp.restartTask();
-		//// li.do_localization(2, 2);
-		//// lp.killTask();
-		////
-		//// nav.travelTo(2, 2);
-		////
-		////
-		//// nav.travelTo(3, 1);
-		//
-		//// nav.turn2(45,true);
-		//
-		//// lp.restartTask();
-		//// li.do_localization(3, 1);
-		//// lp.killTask();
-		////
-		//// nav.travelTo(3, 1);
-		//// nav.turn2(45,true);
-		//// lp.restartTask();
-		//// li.anyPointLocalization();
-		//// lp.killTask();
+		
 	}
 
 	/**

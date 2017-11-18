@@ -290,16 +290,16 @@ public class LightLocalization {
 			odometer.setY(CaptureFlag.TILE_LENGTH);
 			odometer.setTheta(0);
 		} else if (corner == 1) {
-			odometer.setX(7 * CaptureFlag.TILE_LENGTH);
+			odometer.setX(11 * CaptureFlag.TILE_LENGTH);
 			odometer.setY(CaptureFlag.TILE_LENGTH);
 			odometer.setTheta(3 * Math.PI / 2);
 		} else if (corner == 2) {
-			odometer.setX(7 * CaptureFlag.TILE_LENGTH);
-			odometer.setY(7 * CaptureFlag.TILE_LENGTH);
+			odometer.setX(11 * CaptureFlag.TILE_LENGTH);
+			odometer.setY(11 * CaptureFlag.TILE_LENGTH);
 			odometer.setTheta(Math.PI);
 		} else if (corner == 3) {
 			odometer.setX(1 * CaptureFlag.TILE_LENGTH);
-			odometer.setY(7 * CaptureFlag.TILE_LENGTH);
+			odometer.setY(11 * CaptureFlag.TILE_LENGTH);
 			odometer.setTheta(Math.PI / 2);
 		}
 		cornerLocalization = false;

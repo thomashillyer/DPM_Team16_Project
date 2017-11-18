@@ -83,7 +83,7 @@ public class Navigation extends Thread {
 		// travel to the next point, and don't wait until the action is
 		// complete. So the boolean in both rotate method should be true
 
-		leftMotor.setSpeed(CaptureFlag.FORWARDSPEED - 1);
+		leftMotor.setSpeed(CaptureFlag.FORWARDSPEED); //had -1 here
 		rightMotor.setSpeed(CaptureFlag.FORWARDSPEED);
 
 		// rightMotor.startSynchronization();
@@ -164,6 +164,34 @@ public class Navigation extends Thread {
 			rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, theta), false);
 		}
 		// rightMotor.endSynchronization();
+	}
+	
+	
+	
+	//add javadoc for this
+	protected void crossBridge(int sh_ll_x, int sh_ll_y, int sh_ur_x, int sh_ur_y, int sv_ll_x, int sv_ll_y) {
+	  
+	  //based on orientation of bridge, traverse it in a certain manner
+      if(sh_ll_x < sh_ur_x && sh_ll_y < sh_ur_y) {
+        travelTo(sh_ll_x, sh_ll_y + 0.5);
+        travelTo(sh_ur_x - 0.5, sh_ur_y - 0.5);
+        travelTo(sv_ll_x + 0.5, sv_ll_y);
+      }
+      else if(sh_ll_x < sh_ur_x && sh_ll_y > sh_ur_y) {
+        travelTo(sh_ll_x + 0.5, sh_ll_y);
+        travelTo(sh_ur_x - 0.5, sh_ur_y - 0.5);
+        travelTo(sv_ll_x, sv_ll_y + 0.5);
+      }
+      else if(sh_ll_x > sh_ur_x && sh_ll_y > sh_ur_y) {
+        travelTo(sh_ll_x - 0.5, sh_ll_y);
+        travelTo(sh_ur_x + 0.5, sh_ur_y - 0.5);
+        travelTo(sv_ll_x, sv_ll_y + 0.5);
+      }
+      else if(sh_ll_x > sh_ur_x && sh_ll_y < sh_ur_y) {
+        travelTo(sh_ll_x, sh_ll_y + 0.5);
+        travelTo(sh_ur_x + 0.5, sh_ur_y - 0.5);
+        travelTo(sv_ll_x - 0.5, sv_ll_y);
+      }
 	}
 	
 //	protected void turn2(double theta, boolean stop) {
