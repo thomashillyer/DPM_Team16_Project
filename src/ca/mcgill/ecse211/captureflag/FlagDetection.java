@@ -22,7 +22,7 @@ public class FlagDetection {
 	private double previousTheta = 0;
 
 	private Object lock = new Object();
-	private volatile boolean isFlagDetecting = false;
+	private volatile boolean isFlagDetecting = true;
 
 	public FlagDetection(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, Odometer odometer,
 			Navigation nav, double x, double y, int flagColor) {
@@ -37,23 +37,32 @@ public class FlagDetection {
 	}
 
 	protected void processUSData(int distance) {
-		if (isFlagDetecting()) {
+		// protected void processUSData(float[] ultrasonicData) {
+		// float avgDist = 0;
+		if (this.isFlagDetecting()) {
 			// filter ultrasonic sensor data
+			// currentDistance = (int) (avgDist/ultrasonicData.length);
+			// previou for (int i = 0; i < ultrasonicData.length; i++) {
+			// currentDistance = CaptureFlag.filter((int) ultrasonicData[i] * 100);
+			// avgDist += currentDistance;
+			// }
+			// sTheta;
 			currentDistance = CaptureFlag.filter(distance);
-			// previousTheta;
-			Sound.beep();
-			Sound.beep();
+			// Sound.beep();
+			// Sound.beep();
+			// System.out.println("usle " +ultrasonicData.length);
+			System.out.println("dist " + currentDistance);
 
 			double RANGE_SAFETY_SCALE = 1.5;
 			// calculated by using the diagonal of a block placed at the far corner of a
 			// square, any angle less than this is not a new flag
 			double MIN_ANGLE_SEPARATION = 0.3835967;
 			double theta = 0, f_dX = 0, f_dY = 0, r_dX = 0, r_dY = 0, dX = 0, dY = 0;
-
+			// System.out.println("distance " +distance);
 			// within the two blocks.
 			if (currentDistance < RANGE_SAFETY_SCALE * Math.sqrt(2) * CaptureFlag.TILE_LENGTH) {
-				
-				Sound.buzz();
+
+				// Sound.buzz();
 
 				// falling edge
 				if (currentDistance < previousDistance) {
@@ -84,12 +93,21 @@ public class FlagDetection {
 				dY = (f_dY + r_dY) / 2.0;
 
 				points.add(new Point2D.Double(x + dX, y + dY));
-				Sound.beep();
+				// Sound.beep();
 			}
 
 			previousDistance = currentDistance;
 			previousTheta = theta;
 		}
+	}
+
+	public void processLightSensorData(float r, float g, float b) {
+		// TODO Auto-generated method stub
+		r = Math.round(r);
+		g = Math.round(g);
+		b = Math.round(b);
+		System.out.println("light:" + r + " " + g + " " + b);
+
 	}
 
 	protected void findFlag() {
@@ -117,7 +135,7 @@ public class FlagDetection {
 		// nav.turnTo()
 		// rotate through 180 degrees to sweep the two squares for 'flags'
 		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 180), true);
-		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 180), true);
+		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 180), false);
 
 		synchronized (lock) {
 			isFlagDetecting = false;
@@ -150,11 +168,10 @@ public class FlagDetection {
 		}
 
 		// hopefully only 3 points
-		System.out.println(points.size());
+		System.out.println("points size " + points.size());
 
 		// TODO fix travelling to flags and implement logic to check colour of flag
 		for (Point2D.Double p : points) {
-			
 
 			System.out.println(OdometryDisplay.formattedDoubleToString(p.getX(), 3) + " , "
 					+ OdometryDisplay.formattedDoubleToString(p.getY(), 3));
@@ -170,14 +187,14 @@ public class FlagDetection {
 	private void checkFlagColour() {
 		// TODO Auto-generated method stub
 		System.out.println("checking flag colour method");
-		
+
 	}
 
 	private void travelBackFromFlag() {
 		// should reverse back to the original point
 		leftMotor.rotate(-CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, CaptureFlag.BOT_LENGTH), true);
 		rightMotor.rotate(-CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, CaptureFlag.BOT_LENGTH), false);
-		
+
 	}
 
 	private void travelToFlag(Point2D.Double p) {
@@ -199,4 +216,5 @@ public class FlagDetection {
 		}
 		// return result;
 	}
+
 }

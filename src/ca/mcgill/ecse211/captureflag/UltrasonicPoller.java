@@ -26,14 +26,16 @@ public class UltrasonicPoller extends Thread {
 		while (true) {
 			while (!kill) {
 				us.fetchSample(usData, 0); // acquire data
+
 				distance = (int) (usData[0] * 100.0); // extract from buffer, cast to int
+
 				if (ul.isLocalizing()) {
 					ul.processUSData(distance); // now take action depending on value
 				}
 
 				if (flag.isFlagDetecting()) {
-					System.out.println("here");
 					flag.processUSData(distance);
+					// flag.processUSData(usData);
 				}
 
 				try {

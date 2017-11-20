@@ -31,7 +31,7 @@ public class CaptureFlag {
 
 	private static final Port usPort = LocalEV3.get().getPort("S1");
 	private static final Port lightSampler = LocalEV3.get().getPort("S2");
-	//private static final Port flagLightSampler = LocalEV3.get().getPort("S3");
+	private static final Port flagLightSampler = LocalEV3.get().getPort("S3");
 
 	public static TextLCD t = LocalEV3.get().getTextLCD();
 
@@ -73,7 +73,7 @@ public class CaptureFlag {
 		// set up us sensor
 		SensorModes usSensor = new EV3UltrasonicSensor(usPort); // usSensor is the instance
 		SampleProvider usDistance = usSensor.getMode("Distance"); // usDistance provides samples from // this instance
-		float[] usData = new float[usDistance.sampleSize()]; // usData is the buffer in which data are
+		float[] usData = new float[usDistance.sampleSize()+7]; // usData is the buffer in which data are
 
 		// set up color sensor
 		SensorModes colorSamplerSensor = new EV3ColorSensor(lightSampler);
@@ -81,9 +81,9 @@ public class CaptureFlag {
 		float[] colorSensorData = new float[colorSamplerSensor.sampleSize()];
 
 		// set up flag color sensor
-//		EV3ColorSensor flagColorSamplerSensor = new EV3ColorSensor(flagLightSampler);
-//		SampleProvider flagColorSensorValue = flagColorSamplerSensor.getRGBMode();
-//		float[] flagColorSensorData = new float[flagColorSensorValue.sampleSize()];
+		EV3ColorSensor flagColorSamplerSensor = new EV3ColorSensor(flagLightSampler);
+		SampleProvider flagColorSensorValue = flagColorSamplerSensor.getRGBMode();
+		float[] flagColorSensorData = new float[flagColorSensorValue.sampleSize()];
 
 		// instantiate classes
 		Odometer odometer = new Odometer(leftMotor, rightMotor);
@@ -106,10 +106,10 @@ public class CaptureFlag {
 		LightLocalization lightLocal = new LightLocalization(leftMotor, rightMotor, odometer, nav);
 
 		LightPoller lp = new LightPoller(colorSensorValue, colorSensorData, lightLocal);
-//		LightPoller lp_flag = new LightPoller(flagColorSensorValue, flagColorSensorData, flag);
+		LightPoller lp_flag = new LightPoller(flagColorSensorValue, flagColorSensorData, flag);
 
 		GameController gc = new GameController(rightMotor, leftMotor, sensorMotor, odometer, lightLocal, usLocal, lp,
-				usPoller, nav, conn, flag);
+				usPoller, nav, conn, lp_flag, flag);
 
 		// TODO remove the switch case as it will not be used for the final project.
 		// Could maybe stay for testing purposes.
@@ -144,7 +144,7 @@ public class CaptureFlag {
 		// dont start until button pressed
 //		Button.waitForAnyPress();
 		odometer.start();
-		odoDispl.start();
+		//odoDispl.start();
 		gc.start();
 		t.clear();
 

@@ -115,7 +115,7 @@ public class GameController extends Thread {
 	 */
 	public GameController(EV3LargeRegulatedMotor rightMotor, EV3LargeRegulatedMotor leftMotor,
 			EV3MediumRegulatedMotor zip, Odometer odo, LightLocalization li, UltrasonicLocalization us, LightPoller lp,
-			UltrasonicPoller usPoller, Navigation nav, WifiConnection conn, FlagDetection flag) {
+			UltrasonicPoller usPoller, Navigation nav, WifiConnection conn, LightPoller lp_flag, FlagDetection flag) {
 		this.li = li;
 		this.us = us;
 		this.lp = lp;
@@ -141,14 +141,19 @@ public class GameController extends Thread {
 		// directly updates the variables in GameController with the values from the
 		// server
 		// getDataFromServer();
+		System.out.println("press");
+		Button.waitForAnyPress();
 
 		flag_zone_x = 0;
 		flag_zone_y = 0;
-		
-		usPoller.start();
+
+		// usPoller.start();
+		lp_flag.start();
 		flag.findFlag();
-		usPoller.killTask();
-		
+		// usPoller.killTask();
+		lp_flag.killTask();
+
+		Button.waitForAnyPress();
 
 		// robot is now on the ground at the end of the zipline
 		// drive to approximately zo-r
@@ -169,7 +174,7 @@ public class GameController extends Thread {
 		// calculateSearchRegionPoint();
 		// nav.travelTo(flag_zone_x, flag_zone_y);
 		// search for flag - not needed for beta demo
-		//flag.findFlag(); // TODO needs a lot of work
+		// flag.findFlag(); // TODO needs a lot of work
 		// end search for flag
 
 		// TODO after beta add logic for bridge traversal etc
