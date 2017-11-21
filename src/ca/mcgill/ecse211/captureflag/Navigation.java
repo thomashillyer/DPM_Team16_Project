@@ -170,7 +170,6 @@ public class Navigation extends Thread {
 	
 	//add javadoc for this
 	protected void crossBridge(int sh_ll_x, int sh_ll_y, int sh_ur_x, int sh_ur_y, int sv_ll_x, int sv_ll_y) {
-	  
 	  //based on orientation of bridge, traverse it in a certain manner
       if(sh_ll_x < sh_ur_x && sh_ll_y < sh_ur_y) {
         travelTo(sh_ll_x, sh_ll_y + 0.5);

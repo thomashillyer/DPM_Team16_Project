@@ -167,7 +167,7 @@ public class GameController extends Thread {
 			li.cornerLocalization(greenCorner);
 			lp.killTask();
 			
-			Button.waitForAnyPress();
+	
 			// end light localization
 //			Button.waitForAnyPress();
 
@@ -204,28 +204,30 @@ public class GameController extends Thread {
 
 			leftMotor.forward();
 			rightMotor.forward();
+//			long milli = System.currentTimeMillis();
+//			while (System.currentTimeMillis() - milli < 5000);
+//			leftMotor.stop(true);
+//			rightMotor.stop(true);
+			
 			long milli = System.currentTimeMillis();
-			while (System.currentTimeMillis() - milli < 6000)
-				;
-
+			while (System.currentTimeMillis() - milli < 16600);
 			leftMotor.stop(true);
-			rightMotor.stop(true);
-			milli = System.currentTimeMillis();
-			while (System.currentTimeMillis() - milli < 8000);
-			odo.setX(zc_r_x);
-			odo.setY(zc_r_y);
+            rightMotor.stop(true);
+			zip.stop(true);
+			odo.setX(zc_r_x*CaptureFlag.TILE_LENGTH);
+			odo.setY(zc_r_y*CaptureFlag.TILE_LENGTH);
+
 			nav.travelTo(zo_r_x, zo_r_y);
 			
-//			zip.stop();
+			//zip.stop();
 
 			// should now be about at end of zipline
 			// drive forward a block length
 			// localize assuming at zo_r
 			
-			
 			lp.restartTask();
 			
-//			li.afterZipLine();
+	//		li.afterZipLine();
 			
 			li.anyPointLocalization(zo_r_x, zo_r_y);
 			lp.killTask();
@@ -233,8 +235,13 @@ public class GameController extends Thread {
 //			Button.waitForAnyPress();
 
 			// travel to flag region
-			nav.travelTo(sr_ll_x, sr_ll_y);
-//			Button.waitForAnyPress();
+			//add rest of flag logic here
+//			nav.travelTo(sr_ll_x, sr_ll_y);
+//			 lp.restartTask();
+//	            li.anyPointLocalization(sr_ll_x, sr_ll_y); 
+//	            lp.killTask();
+//	            nav.travelTo(sr_ll_x, sr_ll_y);
+
 
 			// robot is now on the ground at the end of the zipline
 			// drive to approximately zo-r
@@ -257,10 +264,11 @@ public class GameController extends Thread {
 			// search for flag - not needed for beta demo
 			// flag.findFlag(); // TODO needs a lot of work
 			// end search for flag
+			
+			
 
 			// TODO after beta add logic for bridge traversal etc
 
-			
 			//bridge logic
             //travel to lower left coordinates at entrance of bridge and localize
             nav.travelTo(sh_ll_x, sh_ll_y); 
@@ -269,10 +277,8 @@ public class GameController extends Thread {
             lp.killTask();
             nav.travelTo(sh_ll_x, sh_ll_y);
             
-            
             nav.crossBridge(sh_ll_x, sh_ll_y, sh_ur_x, sh_ur_y, sv_ll_x, sv_ll_y);
                     
-            
             //travel to the lower left exit of the bridge and relocalize
             nav.travelTo(sv_ll_x, sv_ll_y);
             lp.restartTask();
@@ -281,8 +287,21 @@ public class GameController extends Thread {
             nav.travelTo(sv_ll_x, sv_ll_y);
             
             //travel back to base
-            //might need to retain the value of the corner coordinates at corner localization to have to travel back to?
+            nav.travelTo(sg_ur_x, sg_ur_y);
+            if(greenCorner == 0) {
+              nav.travelTo(0.5, 0.5);
+            }
+            else if(greenCorner == 1) {
+              nav.travelTo(11.5, 0.5);
+            }
+            else if(greenCorner == 2) {
+              nav.travelTo(11.5, 11.5);
+            }
+            else if(greenCorner == 3) {
+              nav.travelTo(0.5, 11.5);
+            }
             
+        //red side logic   
 		} else if (redTeam == CaptureFlag.TEAM_NUMBER) {
 			assignedGreen = false;
 
@@ -296,17 +315,16 @@ public class GameController extends Thread {
 
 			// TODO the rest
 			
-			//bridge logic
+			//bridge logic     
+			
 			//travel to lower left coordinates at entrance of bridge and localize
-			nav.travelTo(sh_ll_x, sh_ll_y); 
-			lp.restartTask();
+            nav.travelTo(sh_ll_x, sh_ll_y); 
+            lp.restartTask();
             li.anyPointLocalization(sh_ll_x, sh_ll_y); 
             lp.killTask();
             nav.travelTo(sh_ll_x, sh_ll_y);
             
-            
             nav.crossBridge(sh_ll_x, sh_ll_y, sh_ur_x, sh_ur_y, sv_ll_x, sv_ll_y);
-					
 			
 			//travel to the lower left exit of the bridge and relocalize
 			nav.travelTo(sv_ll_x, sv_ll_y);
@@ -315,8 +333,77 @@ public class GameController extends Thread {
             lp.killTask();
             nav.travelTo(sv_ll_x, sv_ll_y);
 
-            //now travel to flag coords
-            
+//            //now travel to flag coords
+//            //add flag logic here--------------------
+//            nav.travelTo(sg_ur_x, sg_ur_y);
+//            
+//            
+//            //------------------------
+//            
+//            //travel to zipline 
+//            nav.travelTo(zo_g_x, zo_g_y);
+//
+//            // anypoint light localize
+//            lp.restartTask();
+//            li.anyPointLocalization(zo_g_x, zo_g_y); // dont pass a point because it assumes its close to the point it should
+//            lp.killTask();
+//            nav.travelTo(zo_g_x, zo_g_y);
+//
+//            // traverse zipline
+//            // travel to start of zipline
+//            zip.setSpeed(400);
+//
+//            zip.backward();
+//            // zip.rotate(-CaptureFlag.convertDistance(CaptureFlag.PULLEY_RADIUS, 12 *
+//            // CaptureFlag.TILE_LENGTH), true);
+//            nav.travelTo(zc_g_x, zc_g_y);
+////          leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -5), true);
+////          rightMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 5), false);
+//            // nav.turnTo(zc_g_x, zc_g_y);
+//
+//            leftMotor.forward();
+//            rightMotor.forward();
+//            long milli = System.currentTimeMillis();
+//            while (System.currentTimeMillis() - milli < 6000);
+//
+//            leftMotor.stop(true);
+//            rightMotor.stop(true);
+//            milli = System.currentTimeMillis();
+//            while (System.currentTimeMillis() - milli < 8000);
+//            odo.setX(zc_r_x);
+//            odo.setY(zc_r_y);
+//            nav.travelTo(zo_r_x, zo_r_y);
+//            
+////          zip.stop();
+//
+//            // should now be about at end of zipline
+//            // drive forward a block length
+//            // localize assuming at zo_r
+//            
+//            
+//            lp.restartTask();
+//            
+////          li.afterZipLine();
+//            
+//            li.anyPointLocalization(zo_r_x, zo_r_y);
+//            lp.killTask();
+//            nav.travelTo(zo_r_x, zo_r_y);
+//            
+//            
+//            //travel back to base
+//            nav.travelTo(sg_ur_x, sg_ur_y);
+//            if(redCorner == 0) {
+//              nav.travelTo(0.5, 0.5);
+//            }
+//            else if(redCorner == 1) {
+//              nav.travelTo(11.5, 0.5);
+//            }
+//            else if(redCorner == 2) {
+//              nav.travelTo(11.5, 11.5);
+//            }
+//            else if(redCorner == 3) {
+//              nav.travelTo(0.5, 11.5);
+//            }
 		}
 		
 	}
