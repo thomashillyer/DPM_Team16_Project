@@ -141,17 +141,22 @@ public class GameController extends Thread {
 		// directly updates the variables in GameController with the values from the
 		// server
 		// getDataFromServer();
-		System.out.println("press");
-		Button.waitForAnyPress();
+		// System.out.println("press");
+		// Button.waitForAnyPress();
 
 		flag_zone_x = 0;
 		flag_zone_y = 0;
 
-		// usPoller.start();
-		lp_flag.start();
-		flag.findFlag();
+		// calculateSearchRegionPoint();
+		// nav.travelTo(flag_zone_x, flag_zone_y);
+		// System.out.println("turn to the left\n press");
+		// Button.waitForAnyPress();
+
+		usPoller.start();
+		// lp_flag.start();
+		flag.findFlag(flag_zone_x, flag_zone_y);
 		// usPoller.killTask();
-		lp_flag.killTask();
+		// lp_flag.killTask();
 
 		Button.waitForAnyPress();
 
@@ -171,7 +176,6 @@ public class GameController extends Thread {
 		// // end localize at point after zipline
 		//
 		// // navigate to flag region
-		// calculateSearchRegionPoint();
 		// nav.travelTo(flag_zone_x, flag_zone_y);
 		// search for flag - not needed for beta demo
 		// flag.findFlag(); // TODO needs a lot of work
