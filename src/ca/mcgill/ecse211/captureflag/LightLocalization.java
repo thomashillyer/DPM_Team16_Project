@@ -69,7 +69,7 @@ public class LightLocalization {
 	 *            An instance of the Navigation class.
 	 */
 	public LightLocalization(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, Odometer odometer,
-			Navigation nav) {
+			Navigation nav) {	
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
 		this.odometer = odometer;
@@ -78,8 +78,12 @@ public class LightLocalization {
 		// syncList[0] = leftMotor;
 		// rightMotor.synchronizeWith(syncList);
 	}
-
-	public void do_localization(int x_start, int y_start) {
+/**
+ * Method will localize the robot at any point along the board. The robot will end up on the point and orient to 0 degrees after the localization
+ * @param x_start The x position of the point the robot is supposed to be at
+ * @param y_start The y position of the point the robot is supposed to be at
+ */
+	public void anyPointLocalization(int x_start, int y_start) {
 		// Wait for the user to press a button
 		// Button.waitForAnyPress();
 
@@ -255,7 +259,7 @@ public class LightLocalization {
 		// // rightMotor.stop();
 		// rightMotor.setAcceleration(CaptureFlag.ACCELERATION);
 		//
-		// Adjust the robot position, before it starts to rotate to ensure that
+		// Adjust the robot position, before it starts to rotpate to ensure that
 		// the light sensor will cross 4 black lines
 		adjustRobotStartingPosition();
 		//
@@ -274,11 +278,12 @@ public class LightLocalization {
 		// // rightMotor.endSynchronization();
 		// detectFourLines = false;
 
-		do_localization(0, 0);
+		anyPointLocalization(0, 0);
 
 		// correctOdometer(0);
 		nav.travelTo(0, 0);
-		nav.turn(-(odometer.getTheta()+Math.toRadians(5)));
+
+		nav.turn(-(odometer.getTheta()+Math.toRadians(8)));
 
 		if (corner == 0) {
 			odometer.setX(CaptureFlag.TILE_LENGTH);
@@ -293,7 +298,7 @@ public class LightLocalization {
 			odometer.setY(7 * CaptureFlag.TILE_LENGTH);
 			odometer.setTheta(Math.PI);
 		} else if (corner == 3) {
-			odometer.setX(1 * CaptureFlag.TILE_LENGTH);
+			odometer.setX(CaptureFlag.TILE_LENGTH);
 			odometer.setY(7 * CaptureFlag.TILE_LENGTH);
 			odometer.setTheta(Math.PI / 2);
 		}
@@ -302,49 +307,49 @@ public class LightLocalization {
 		// rightMotor.endSynchronization();
 	}
 
-	protected void anyPointLocalization() {
-		detectFourLines = true;
-
-		// rotate the robot 360 degrees
-		// rightMotor.startSynchronization();
-		lineCounter = 0;
-		lines = new double[4];
-		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true);
-		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), false);
-		// rightMotor.endSynchronization();
-		detectFourLines = false;
-
-		correctOdometer(0);
-		nav.travelTo(0, 0);
-		nav.turn(-(odometer.getTheta()));
-
-		// rightMotor.synchronizeWith(syncList);
-
-		// lineCounter = 0;
-		// double incomeTheta = odometer.getTheta();
-		//
-		// detectFourLines = true;
-		// // rightMotor.startSynchronization();
-		// leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS,
-		// CaptureFlag.TRACK, 360), true);
-		// rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS,
-		// CaptureFlag.TRACK, 360), false);
-		// // rightMotor.endSynchronization();
-		// detectFourLines = false;
-		//
-		// correctOdometer(incomeTheta);
-		//
-		// Button.waitForAnyPress();
-		//
-		// nav.travelTo(0, 0);
-		// nav.turn(-(odometer.getTheta()));
-
-		// leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS,
-		// CaptureFlag.TRACK, 3), true);
-		// rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS,
-		// CaptureFlag.TRACK, 3), false);
-		// rightMotor.endSynchronization();
-	}
+//	protected void anyPointLocalization() {
+//		detectFourLines = true;
+//
+//		// rotate the robot 360 degrees
+//		// rightMotor.startSynchronization();
+//		lineCounter = 0;
+//		lines = new double[4];
+//		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true);
+//		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), false);
+//		// rightMotor.endSynchronization();
+//		detectFourLines = false;
+//
+//		correctOdometer(0);
+//		nav.travelTo(0, 0);
+//		nav.turn(-(odometer.getTheta()));
+//
+//		// rightMotor.synchronizeWith(syncList);
+//
+//		// lineCounter = 0;
+//		// double incomeTheta = odometer.getTheta();
+//		//
+//		// detectFourLines = true;
+//		// // rightMotor.startSynchronization();
+//		// leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS,
+//		// CaptureFlag.TRACK, 360), true);
+//		// rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS,
+//		// CaptureFlag.TRACK, 360), false);
+//		// // rightMotor.endSynchronization();
+//		// detectFourLines = false;
+//		//
+//		// correctOdometer(incomeTheta);
+//		//
+//		// Button.waitForAnyPress();
+//		//
+//		// nav.travelTo(0, 0);
+//		// nav.turn(-(odometer.getTheta()));
+//
+//		// leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS,
+//		// CaptureFlag.TRACK, 3), true);
+//		// rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS,
+//		// CaptureFlag.TRACK, 3), false);
+//		// rightMotor.endSynchronization();
+//	}
 
 	/**
 	 * This method calculates the robot's actual x and y position using the angle
