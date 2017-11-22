@@ -3,6 +3,7 @@ package ca.mcgill.ecse211.captureflag;
 import java.util.Map;
 import ca.mcgill.ecse211.WiFiClient.WifiConnection;
 import lejos.hardware.Button;
+import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
@@ -166,10 +167,8 @@ public class GameController extends Thread {
 			lp.start();
 			li.cornerLocalization(greenCorner);
 			lp.killTask();
-			
-	
 			// end light localization
-//			Button.waitForAnyPress();
+
 
 			// green uses zipline and returns on bridge
 
@@ -198,6 +197,8 @@ public class GameController extends Thread {
 			// zip.rotate(-CaptureFlag.convertDistance(CaptureFlag.PULLEY_RADIUS, 12 *
 			// CaptureFlag.TILE_LENGTH), true);
 			nav.travelTo(zc_g_x, zc_g_y);
+			
+			double tempTheta = odo.getTheta();
 //			leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -5), true);
 //			rightMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 5), false);
 			// nav.turnTo(zc_g_x, zc_g_y);
@@ -216,6 +217,7 @@ public class GameController extends Thread {
 			zip.stop(true);
 			odo.setX(zc_r_x*CaptureFlag.TILE_LENGTH);
 			odo.setY(zc_r_y*CaptureFlag.TILE_LENGTH);
+			odo.setTheta(tempTheta);
 
 			nav.travelTo(zo_r_x, zo_r_y);
 			
@@ -232,11 +234,17 @@ public class GameController extends Thread {
 			li.anyPointLocalization(zo_r_x, zo_r_y);
 			lp.killTask();
 			nav.travelTo(zo_r_x, zo_r_y);
-//			Button.waitForAnyPress();
 
 			// travel to flag region
 			//add rest of flag logic here
-//			nav.travelTo(sr_ll_x, sr_ll_y);
+			nav.travelTo(sr_ll_x, sr_ll_y);
+			lp.restartTask();
+	        li.anyPointLocalization(sr_ll_x, sr_ll_y);
+	        lp.killTask();
+	        nav.travelTo(sr_ll_x, sr_ll_y);
+			Sound.beep();
+			Sound.beep();
+			Sound.beep();
 //			 lp.restartTask();
 //	            li.anyPointLocalization(sr_ll_x, sr_ll_y); 
 //	            lp.killTask();
@@ -271,33 +279,38 @@ public class GameController extends Thread {
 
 			//bridge logic
             //travel to lower left coordinates at entrance of bridge and localize
-            nav.travelTo(sh_ll_x, sh_ll_y); 
+			//oreintation given in doc
+            nav.travelTo(sh_ll_x-1, sh_ll_y); 
             lp.restartTask();
-            li.anyPointLocalization(sh_ll_x, sh_ll_y); 
+            li.anyPointLocalization(sh_ll_x-1, sh_ll_y); 
             lp.killTask();
-            nav.travelTo(sh_ll_x, sh_ll_y);
+            nav.travelTo(sh_ll_x-1, sh_ll_y);
             
             nav.crossBridge(sh_ll_x, sh_ll_y, sh_ur_x, sh_ur_y, sv_ll_x, sv_ll_y);
                     
             //travel to the lower left exit of the bridge and relocalize
-            nav.travelTo(sv_ll_x, sv_ll_y);
+            nav.travelTo(sv_ll_x, sv_ll_y-1);
             lp.restartTask();
-            li.anyPointLocalization(sv_ll_x, sv_ll_y);
+            li.anyPointLocalization(sv_ll_x, sv_ll_y-1);
             lp.killTask();
-            nav.travelTo(sv_ll_x, sv_ll_y);
+            nav.travelTo(sv_ll_x, sv_ll_y-1);
             
             //travel back to base
-            nav.travelTo(sg_ur_x, sg_ur_y);
             if(greenCorner == 0) {
+              nav.travelTo(1,1);
               nav.travelTo(0.5, 0.5);
             }
             else if(greenCorner == 1) {
-              nav.travelTo(11.5, 0.5);
+              //(11.5, 0.5)
+              nav.travelTo(7, 1);
+              nav.travelTo(7.5, 0.5);
             }
             else if(greenCorner == 2) {
+              nav.travelTo(11, 11);
               nav.travelTo(11.5, 11.5);
             }
             else if(greenCorner == 3) {
+              nav.travelTo(1, 11);
               nav.travelTo(0.5, 11.5);
             }
             
@@ -318,92 +331,107 @@ public class GameController extends Thread {
 			//bridge logic     
 			
 			//travel to lower left coordinates at entrance of bridge and localize
-            nav.travelTo(sh_ll_x, sh_ll_y); 
+			//coords for given orientation in doc
+            nav.travelTo(sh_ll_x-1, sh_ll_y); 
             lp.restartTask();
-            li.anyPointLocalization(sh_ll_x, sh_ll_y); 
+            li.anyPointLocalization(sh_ll_x-1, sh_ll_y); 
             lp.killTask();
-            nav.travelTo(sh_ll_x, sh_ll_y);
+            nav.travelTo(sh_ll_x-1, sh_ll_y);
             
             nav.crossBridge(sh_ll_x, sh_ll_y, sh_ur_x, sh_ur_y, sv_ll_x, sv_ll_y);
 			
 			//travel to the lower left exit of the bridge and relocalize
-			nav.travelTo(sv_ll_x, sv_ll_y);
+			nav.travelTo(sv_ll_x, sv_ll_y-1);
             lp.restartTask();
-            li.anyPointLocalization(sv_ll_x, sv_ll_y);
+            li.anyPointLocalization(sv_ll_x, sv_ll_y-1);
             lp.killTask();
-            nav.travelTo(sv_ll_x, sv_ll_y);
+            nav.travelTo(sv_ll_x, sv_ll_y-1);
 
 //            //now travel to flag coords
 //            //add flag logic here--------------------
-//            nav.travelTo(sg_ur_x, sg_ur_y);
+            nav.travelTo(sg_ll_x, sg_ll_y);
+            lp.restartTask();
+            li.anyPointLocalization(sg_ll_x, sg_ll_y);
+            lp.killTask();
+            nav.travelTo(sg_ll_x, sg_ll_y);
+            Sound.beep();
+            Sound.beep();
+            Sound.beep();
 //            
 //            
 //            //------------------------
 //            
 //            //travel to zipline 
-//            nav.travelTo(zo_g_x, zo_g_y);
-//
+            nav.travelTo(zo_g_x, zo_g_y);
+
 //            // anypoint light localize
-//            lp.restartTask();
-//            li.anyPointLocalization(zo_g_x, zo_g_y); // dont pass a point because it assumes its close to the point it should
-//            lp.killTask();
-//            nav.travelTo(zo_g_x, zo_g_y);
+            lp.restartTask();
+            li.anyPointLocalization(zo_g_x, zo_g_y); // dont pass a point because it assumes its close to the point it should
+            lp.killTask();
+            nav.travelTo(zo_g_x, zo_g_y);
 //
 //            // traverse zipline
 //            // travel to start of zipline
-//            zip.setSpeed(400);
+            zip.setSpeed(400);
 //
-//            zip.backward();
+            zip.backward();
 //            // zip.rotate(-CaptureFlag.convertDistance(CaptureFlag.PULLEY_RADIUS, 12 *
 //            // CaptureFlag.TILE_LENGTH), true);
-//            nav.travelTo(zc_g_x, zc_g_y);
+            nav.travelTo(zc_g_x, zc_g_y);
 ////          leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -5), true);
 ////          rightMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 5), false);
 //            // nav.turnTo(zc_g_x, zc_g_y);
 //
-//            leftMotor.forward();
-//            rightMotor.forward();
-//            long milli = System.currentTimeMillis();
-//            while (System.currentTimeMillis() - milli < 6000);
-//
-//            leftMotor.stop(true);
-//            rightMotor.stop(true);
-//            milli = System.currentTimeMillis();
-//            while (System.currentTimeMillis() - milli < 8000);
-//            odo.setX(zc_r_x);
-//            odo.setY(zc_r_y);
-//            nav.travelTo(zo_r_x, zo_r_y);
+            leftMotor.forward();
+            rightMotor.forward();
+////          long milli = System.currentTimeMillis();
+////          while (System.currentTimeMillis() - milli < 5000);
+////          leftMotor.stop(true);
+////          rightMotor.stop(true);
 //            
-////          zip.stop();
+            long milli = System.currentTimeMillis();
+            while (System.currentTimeMillis() - milli < 16600);
+            leftMotor.stop(true);
+            rightMotor.stop(true);
+            zip.stop(true);
+            odo.setX(zc_r_x*CaptureFlag.TILE_LENGTH);
+            odo.setY(zc_r_y*CaptureFlag.TILE_LENGTH);
+
+            nav.travelTo(zo_r_x, zo_r_y);
+//            
+            //zip.stop();
 //
 //            // should now be about at end of zipline
 //            // drive forward a block length
 //            // localize assuming at zo_r
 //            
-//            
-//            lp.restartTask();
-//            
-////          li.afterZipLine();
-//            
-//            li.anyPointLocalization(zo_r_x, zo_r_y);
-//            lp.killTask();
-//            nav.travelTo(zo_r_x, zo_r_y);
-//            
-//            
+            lp.restartTask();
+            
+            
+            li.anyPointLocalization(zo_r_x, zo_r_y);
+            lp.killTask();
+            nav.travelTo(zo_r_x, zo_r_y);
+
+            
+            
 //            //travel back to base
-//            nav.travelTo(sg_ur_x, sg_ur_y);
-//            if(redCorner == 0) {
-//              nav.travelTo(0.5, 0.5);
-//            }
-//            else if(redCorner == 1) {
-//              nav.travelTo(11.5, 0.5);
-//            }
-//            else if(redCorner == 2) {
-//              nav.travelTo(11.5, 11.5);
-//            }
-//            else if(redCorner == 3) {
-//              nav.travelTo(0.5, 11.5);
-//            }
+            if(redCorner == 0) {
+              nav.travelTo(1,1);
+              nav.travelTo(0.5, 0.5);
+            }
+            else if(redCorner == 1) {
+              nav.travelTo(11, 1);
+              nav.travelTo(11.5, 0.5);
+            }
+            else if(redCorner == 2) {
+              nav.travelTo(11, 11);
+              nav.travelTo(11.5, 11.5);
+            }
+            else if(redCorner == 3) {
+//            (0.5,11.5)
+              nav.travelTo(1, 7);
+              nav.travelTo(0.5, 7.5);
+            }
 		}
 		
 	}
@@ -494,8 +522,8 @@ public class GameController extends Thread {
 			red_ur_y = ((Long) data.get("Red_UR_y")).intValue();
 			green_ll_x = ((Long) data.get("Green_LL_x")).intValue();
 			green_ll_y = ((Long) data.get("Green_LL_y")).intValue();
-			green_ur_x = ((Long) data.get("Green_LL_x")).intValue();
-			green_ur_y = ((Long) data.get("Green_LL_y")).intValue();
+			green_ur_x = ((Long) data.get("Green_UR_x")).intValue();
+			green_ur_y = ((Long) data.get("Green_UR_y")).intValue();
 			zc_r_x = ((Long) data.get("ZC_R_x")).intValue();
 			zc_r_y = ((Long) data.get("ZC_R_y")).intValue();
 			zo_r_x = ((Long) data.get("ZO_R_x")).intValue();

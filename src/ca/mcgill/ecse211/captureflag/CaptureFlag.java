@@ -41,11 +41,11 @@ public class CaptureFlag {
 
 	protected static final double PULLEY_RADIUS = 1;
 
-	protected static final int ROTATIONSPEED = 160;
+	protected static final int ROTATIONSPEED = 160; //160
 
-	protected static final int ACCELERATION = 500; // 1000
+	protected static final int ACCELERATION = 500; 
 	protected static final int NAV_ACCELERATION = 100;
-	protected static final int FORWARDSPEED = 200;
+	protected static final int FORWARDSPEED = 200;  //200
 
 	private static final int FILTER_OUT = 23;
 	private static int filterControl;
@@ -54,7 +54,7 @@ public class CaptureFlag {
 
 	protected static final double TILE_LENGTH = 30.48;
 
-	private static final String SERVER_IP = "192.168.2.13";
+	private static final String SERVER_IP = "192.168.2.34";
 
 	protected static final int TEAM_NUMBER = 1;
 	// Enable/disable printing of debug info from the WiFi class

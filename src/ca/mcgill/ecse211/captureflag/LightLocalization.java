@@ -483,8 +483,8 @@ public class LightLocalization {
 		// rightMotor.endSynchronization();
 		// Move the robot backwards 1.5 * its center distance
 		// rightMotor.startSynchronization();
-		rightMotor.rotate(-CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, 1.15 * CaptureFlag.BOT_LENGTH), true);
-		leftMotor.rotate(-CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, 1.15 * CaptureFlag.BOT_LENGTH), false);
+		rightMotor.rotate(-CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, 1.15 * CaptureFlag.BOT_LENGTH-5), true);
+		leftMotor.rotate(-CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, 1.15 * CaptureFlag.BOT_LENGTH-5), false);
 
 		// rightMotor.endSynchronization();
 	}

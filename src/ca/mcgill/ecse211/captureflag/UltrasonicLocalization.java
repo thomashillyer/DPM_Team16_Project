@@ -210,7 +210,13 @@ public class UltrasonicLocalization {
 		leftMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
 		rightMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
 
-		fallingEdge();
+		//fallingEdge();
+		if(readUSDistance() <= HORIZONTAL_CONST + HORIZONTAL_MARGIN) {
+		  fallingEdge();
+		}
+		else {
+		  risingEdge();
+		}
 		// rotate 360 degrees to scan walls
 		
 	}
