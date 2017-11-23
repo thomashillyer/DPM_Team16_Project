@@ -104,8 +104,8 @@ public class LightLocalization {
 
 //		leftMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
 //		rightMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
-		leftMotor.setSpeed(CaptureFlag.FORWARDSPEED);
-		rightMotor.setSpeed(CaptureFlag.FORWARDSPEED);
+		leftMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
+		rightMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
 		detectFourLines = true;
 		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 375), true);
 		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 375), false);
@@ -465,27 +465,30 @@ public class LightLocalization {
 		// rightMotor.startSynchronization();
 
 		// Set the wheel's rotation speed to ROTATESPEED
-		leftMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
-		rightMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
+		leftMotor.setSpeed(CaptureFlag.ROTATIONSPEED + 70);
+		rightMotor.setSpeed(CaptureFlag.ROTATIONSPEED + 70);
 
 		// Rotate the robot by 45 degrees
 		// rightMotor.startSynchronization();
 		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 45), true);
 		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 45), false);
 		// rightMotor.endSynchronization();
-		while (detectSingleLine) {
-			leftMotor.forward();
-			rightMotor.forward();
-		}
+//		while (detectSingleLine) {
+//			leftMotor.forward();
+//			rightMotor.forward();
+//		}
 		// rightMotor.startSynchronization();
 		// leftMotor.stop(true);
 		// rightMotor.stop(true);
 		// rightMotor.endSynchronization();
 		// Move the robot backwards 1.5 * its center distance
 		// rightMotor.startSynchronization();
-		rightMotor.rotate(-CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, 1.15 * CaptureFlag.BOT_LENGTH-5), true);
-		leftMotor.rotate(-CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, 1.15 * CaptureFlag.BOT_LENGTH-5), false);
+//		rightMotor.rotate(-CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, 1.15 * CaptureFlag.BOT_LENGTH-5), true);
+//		leftMotor.rotate(-CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, 1.15 * CaptureFlag.BOT_LENGTH-5), false);
 
+		  rightMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, 20), true);
+		  leftMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, 20), false);
+		
 		// rightMotor.endSynchronization();
 	}
 

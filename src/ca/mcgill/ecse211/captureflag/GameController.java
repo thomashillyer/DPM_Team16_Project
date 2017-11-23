@@ -150,8 +150,8 @@ public class GameController extends Thread {
 		// 1.3 is a safety factor
 		double zipLength = 1.3 * Math.sqrt(Math.pow(zip_x, 2) + Math.pow(zip_y, 2));
 
-		flag_zone_x = 0;
-		flag_zone_y = 0;
+//		flag_zone_x = 0;
+//		flag_zone_y = 0;
 
 		// Ultrasonic localization
 		 usPoller.start();
@@ -161,7 +161,6 @@ public class GameController extends Thread {
 
 		// check what team you have been assigned to
 		if (greenTeam == CaptureFlag.TEAM_NUMBER) {
-			System.out.println("green team corner " + greenCorner);
 			assignedGreen = true;
 			// Light localization
 			lp.start();
@@ -211,7 +210,7 @@ public class GameController extends Thread {
 //			rightMotor.stop(true);
 			
 			long milli = System.currentTimeMillis();
-			while (System.currentTimeMillis() - milli < 16600);
+			while (System.currentTimeMillis() - milli < 17000);
 			leftMotor.stop(true);
             rightMotor.stop(true);
 			zip.stop(true);
@@ -357,11 +356,8 @@ public class GameController extends Thread {
             Sound.beep();
             Sound.beep();
             Sound.beep();
-//            
-//            
-//            //------------------------
-//            
-//            //travel to zipline 
+
+            //travel to zipline 
             nav.travelTo(zo_g_x, zo_g_y);
 
 //            // anypoint light localize
@@ -390,7 +386,7 @@ public class GameController extends Thread {
 ////          rightMotor.stop(true);
 //            
             long milli = System.currentTimeMillis();
-            while (System.currentTimeMillis() - milli < 16600);
+            while (System.currentTimeMillis() - milli < 17000);
             leftMotor.stop(true);
             rightMotor.stop(true);
             zip.stop(true);

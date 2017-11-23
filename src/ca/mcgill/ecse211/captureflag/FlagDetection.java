@@ -57,7 +57,7 @@ public class FlagDetection {
 			// Sound.beep();
 			// Sound.beep();
 			// System.out.println("usle " +ultrasonicData.length);
-			System.out.println("dist " + currentDistance);
+			//System.out.println("dist " + currentDistance);
 
 			double RANGE_SAFETY_SCALE = 1.5;
 			// calculated by using the diagonal of a block placed at the far corner of a
@@ -128,7 +128,6 @@ public class FlagDetection {
 		r = Math.round(r);
 		g = Math.round(g);
 		b = Math.round(b);
-		System.out.println("light:" + r + " " + g + " " + b);
 
 	}
 
@@ -162,7 +161,6 @@ public class FlagDetection {
 		synchronized (lock) {
 			isFlagDetecting = false;
 		}
-		System.out.println("#Points: " + points.size());
 		/*
 		 * List<Integer> toRemove = new ArrayList<>();
 		 * 
@@ -187,21 +185,10 @@ public class FlagDetection {
 
 		// TODO fix travelling to flags and implement logic to check colour of flag
 		for (Point2D.Double p : points) {
-
-			System.out.println(OdometryDisplay.formattedDoubleToString(p.getX(), 3) + " , "
-					+ OdometryDisplay.formattedDoubleToString(p.getY(), 3));
-
 			travelToFlag(p);
-			checkFlagColour();
 			travelBackFromFlag();
 
 		}
-
-	}
-
-	private void checkFlagColour() {
-		// TODO Auto-generated method stub
-		System.out.println("...checking flag colour...");
 
 	}
 

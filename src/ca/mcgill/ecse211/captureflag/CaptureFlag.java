@@ -33,7 +33,7 @@ public class CaptureFlag {
 	private static final Port lightSampler = LocalEV3.get().getPort("S2");
 	//private static final Port flagLightSampler = LocalEV3.get().getPort("S3");
 
-	public static TextLCD t = LocalEV3.get().getTextLCD();
+	protected static TextLCD t = LocalEV3.get().getTextLCD();
 
 	// Values based on 360 degree turn test
 	protected static final double WHEEL_RADIUS = 2.093;
@@ -54,7 +54,7 @@ public class CaptureFlag {
 
 	protected static final double TILE_LENGTH = 30.48;
 
-	private static final String SERVER_IP = "192.168.2.34";
+	private static final String SERVER_IP = "192.168.2.17";
 
 	protected static final int TEAM_NUMBER = 1;
 	// Enable/disable printing of debug info from the WiFi class
@@ -113,7 +113,7 @@ public class CaptureFlag {
 				usPoller, nav, conn, flag);
 
 		odometer.start();
-		odoDispl.start();
+		//odoDispl.start();
 		gc.start();
 		t.clear();
 

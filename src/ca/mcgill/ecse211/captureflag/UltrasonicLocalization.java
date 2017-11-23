@@ -2,6 +2,8 @@ package ca.mcgill.ecse211.captureflag;
 
 import ca.mcgill.ecse211.captureflag.Odometer;
 import lejos.hardware.Sound;
+import lejos.hardware.ev3.LocalEV3;
+import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 /**
@@ -39,7 +41,7 @@ public class UltrasonicLocalization {
 	private volatile boolean isLocalizing = false;
 
 	private boolean fallingEdgeDetected = false;
-
+	
 	/**
 	 * The constructor for the UltrasonicLocalization class
 	 * 
@@ -198,6 +200,7 @@ public class UltrasonicLocalization {
 	 * face north (0 degrees)
 	 */
 	protected void localize() {
+	    CaptureFlag.t.clear();
 		synchronized (lock) {
 			isLocalizing = true;
 		}
@@ -207,11 +210,11 @@ public class UltrasonicLocalization {
 		rightMotor.stop();
 		rightMotor.setAcceleration(CaptureFlag.ACCELERATION);
 
-		leftMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
-		rightMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
+		leftMotor.setSpeed(CaptureFlag.ROTATIONSPEED + 70);
+		rightMotor.setSpeed(CaptureFlag.ROTATIONSPEED + 70);
 
 		//fallingEdge();
-		if(readUSDistance() <= HORIZONTAL_CONST + HORIZONTAL_MARGIN) {
+		if(readUSDistance() >= HORIZONTAL_CONST + HORIZONTAL_MARGIN) {
 		  fallingEdge();
 		}
 		else {
@@ -300,6 +303,14 @@ public class UltrasonicLocalization {
 				} else {
 					deltaTheta = (Math.PI / 4.0) - (fallingTheta + risingTheta) / 2.0;
 				}
+				
+//				 deltaTheta -= Math.toRadians(45);
+//				if(deltaTheta > 0) {
+//		          deltaTheta += Math.toRadians(45);
+//		        }
+//		        else {
+//		          deltaTheta -= Math.toRadians(45);
+//		        }
 
 				odometer.setTheta(odometer.getTheta() + deltaTheta);
 
@@ -347,7 +358,13 @@ public class UltrasonicLocalization {
 		} else if (alphaAngle > betaAngle) {
 			deltaTheta = Math.PI / 4.0 - (alphaAngle + betaAngle) / 2.0;
 		}
-
+		// deltaTheta -= Math.toRadians(45);
+//		if(deltaTheta < 0) {
+//		  deltaTheta += Math.toRadians(45);
+//		}
+//		else {
+//		  deltaTheta -= Math.toRadians(45);
+//		}
 		// rotate to face 0 degrees
 		leftMotor.rotate(
 				-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, deltaTheta * 180 / Math.PI),
