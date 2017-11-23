@@ -107,8 +107,8 @@ public class LightLocalization {
 		leftMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
 		rightMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
 		detectFourLines = true;
-		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 375), true);
-		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 375), false);
+		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true); //375
+		rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), false);
 //		leftMotor.forward();
 //		rightMotor.backward();
 //		while(lineCounter -1 < 3);
@@ -283,7 +283,7 @@ public class LightLocalization {
 		// correctOdometer(0);
 		nav.travelTo(0, 0);
 
-		nav.turn(-(odometer.getTheta()+Math.toRadians(8)));
+		nav.turn(-(odometer.getTheta())); //+Math.toRadians(8)
 
 		if (corner == 0) {
 			odometer.setX(CaptureFlag.TILE_LENGTH);
@@ -442,7 +442,11 @@ public class LightLocalization {
 		if (cornerLocalization) {
 			if (odometer.getTheta() > 2 * Math.PI) {
 				odometer.setTheta(odometer.getTheta() + deltaThetaY - 2 * Math.PI);
-			} else {
+			} 
+//			else if(odometer.getTheta() < 0) { //changemadehere
+//			    odometer.setTheta(odometer.getTheta() + deltaThetaY + 2 * Math.PI);
+//			}
+			else {
 				odometer.setTheta(odometer.getTheta() + deltaThetaY);
 			}
 		}

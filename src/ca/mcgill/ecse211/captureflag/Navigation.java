@@ -178,13 +178,13 @@ public class Navigation extends Thread {
       }
       else if(sh_ll_x < sh_ur_x && sh_ll_y > sh_ur_y) {
         travelTo(sh_ll_x + 0.5, sh_ll_y);
-        travelTo(sh_ur_x - 0.5, sh_ur_y - 0.5);
-        travelTo(sv_ll_x, sv_ll_y + 0.5);
+        travelTo(sh_ur_x - 0.5, sh_ur_y + 0.5);
+        travelTo(sv_ll_x, sv_ll_y - 0.5);
       }
       else if(sh_ll_x > sh_ur_x && sh_ll_y > sh_ur_y) {
         travelTo(sh_ll_x - 0.5, sh_ll_y);
-        travelTo(sh_ur_x + 0.5, sh_ur_y - 0.5);
-        travelTo(sv_ll_x, sv_ll_y + 0.5);
+        travelTo(sh_ur_x + 0.5, sh_ur_y + 0.5);
+        travelTo(sv_ll_x, sv_ll_y - 0.5);
       }
       else if(sh_ll_x > sh_ur_x && sh_ll_y < sh_ur_y) {
         travelTo(sh_ll_x, sh_ll_y + 0.5);
@@ -193,36 +193,67 @@ public class Navigation extends Thread {
       }
 	}
 	
-//	protected void turn2(double theta, boolean stop) {
-////		isNavigating = true;
-//		
-//		double thetaTwo =  theta- Math.toDegrees(odometer.getTheta());
-//		
-//		if(thetaTwo > 180){
-//			thetaTwo -= 360;
-//			
-//		}
-//		else if(thetaTwo<=-180){
-//			thetaTwo += 360;
-//		}
-//		
-//		leftMotor.setSpeed(CaptureFlag.FORWARDSPEED);
-//		rightMotor.setSpeed(CaptureFlag.FORWARDSPEED);
-//
-//		
-//		
-//		//minimumAngle negative, turn left
-//		if(thetaTwo < 0) { 
-//			leftMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -thetaTwo), true);
-//			rightMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -thetaTwo), false);
-//		} else { //minimumAngle positive, turn right
-//			leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, thetaTwo), true);
-//			rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, thetaTwo), false);
-//		}
-//		
-////		if(stop) {
-////			stop_motors();
-////			isNavigating = false;
-////		}
-//	}
+	protected void localizeBeforeBridge(int sh_ll_x, int sh_ll_y, int sh_ur_x, int sh_ur_y, LightPoller lp, LightLocalization li) {
+	  if(sh_ll_x < sh_ur_x && sh_ll_y < sh_ur_y) {
+	  travelTo(sh_ll_x-1, sh_ll_y); 
+      lp.restartTask();
+      li.anyPointLocalization(sh_ll_x-1, sh_ll_y); 
+      lp.killTask();
+      travelTo(sh_ll_x-1, sh_ll_y);
+	  }
+	  else if(sh_ll_x < sh_ur_x && sh_ll_y > sh_ur_y) {
+	    travelTo(sh_ll_x, sh_ll_y+1); 
+	      lp.restartTask();
+	      li.anyPointLocalization(sh_ll_x, sh_ll_y+1); 
+	      lp.killTask();
+	      travelTo(sh_ll_x, sh_ll_y+1);
+	  }
+	  else if(sh_ll_x > sh_ur_x && sh_ll_y > sh_ur_y) {
+	    travelTo(sh_ll_x, sh_ll_y+1); 
+        lp.restartTask();
+        li.anyPointLocalization(sh_ll_x, sh_ll_y+1); 
+        lp.killTask();
+        travelTo(sh_ll_x, sh_ll_y+1);
+	  }
+	  else if(sh_ll_x > sh_ur_x && sh_ll_y < sh_ur_y) {
+	    travelTo(sh_ll_x+1, sh_ll_y); 
+        lp.restartTask();
+        li.anyPointLocalization(sh_ll_x+1, sh_ll_y); 
+        lp.killTask();
+        travelTo(sh_ll_x+1, sh_ll_y);
+	  }
+	  
+	  
+	}
+	
+	protected void localizeAfterBridge(int sh_ll_x, int sh_ll_y, int sh_ur_x, int sh_ur_y, int sv_ll_x, int sv_ll_y, LightPoller lp, LightLocalization li) {
+	  if(sh_ll_x < sh_ur_x && sh_ll_y < sh_ur_y) {
+	    travelTo(sv_ll_x, sv_ll_y-1);
+        lp.restartTask();
+        li.anyPointLocalization(sv_ll_x, sv_ll_y-1);
+        lp.killTask();
+        travelTo(sv_ll_x, sv_ll_y-1);
+	  }
+	  else if(sh_ll_x < sh_ur_x && sh_ll_y > sh_ur_y) {
+	    travelTo(sv_ll_x-1, sv_ll_y);
+        lp.restartTask();
+        li.anyPointLocalization(sv_ll_x-1, sv_ll_y);
+        lp.killTask();
+        travelTo(sv_ll_x-1, sv_ll_y);
+      }
+      else if(sh_ll_x > sh_ur_x && sh_ll_y > sh_ur_y) {
+        travelTo(sv_ll_x+1, sv_ll_y);
+        lp.restartTask();
+        li.anyPointLocalization(sv_ll_x+1, sv_ll_y);
+        lp.killTask();
+        travelTo(sv_ll_x+1, sv_ll_y);
+      }
+      else if(sh_ll_x > sh_ur_x && sh_ll_y < sh_ur_y) {
+        travelTo(sv_ll_x, sv_ll_y-1);
+        lp.restartTask();
+        li.anyPointLocalization(sv_ll_x, sv_ll_y-1);
+        lp.killTask();
+        travelTo(sv_ll_x, sv_ll_y-1);
+      }
+	}
 }

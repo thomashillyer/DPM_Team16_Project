@@ -142,8 +142,11 @@ public class GameController extends Thread {
 		// --------Integration---------
 		// directly updates the variables in GameController with the values from the
 		// server
-		getDataFromServer();
-
+	//	getDataFromServer();
+		leftMotor.setSpeed(160);
+		rightMotor.setSpeed(160);
+		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true); //378
+        rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), false);
 		// calculate length of zipline
 		double zip_x = Math.abs(zc_g_x - zc_r_x) * CaptureFlag.TILE_LENGTH;
 		double zip_y = Math.abs(zc_g_y - zc_r_y) * CaptureFlag.TILE_LENGTH;
@@ -277,22 +280,13 @@ public class GameController extends Thread {
 			// TODO after beta add logic for bridge traversal etc
 
 			//bridge logic
-            //travel to lower left coordinates at entrance of bridge and localize
-			//oreintation given in doc
-            nav.travelTo(sh_ll_x-1, sh_ll_y); 
-            lp.restartTask();
-            li.anyPointLocalization(sh_ll_x-1, sh_ll_y); 
-            lp.killTask();
-            nav.travelTo(sh_ll_x-1, sh_ll_y);
+			//travel to lower left coordinates at entrance of bridge and localize
+            nav.localizeBeforeBridge(sh_ll_x, sh_ll_y, sh_ur_x, sh_ur_y, lp, li);
             
             nav.crossBridge(sh_ll_x, sh_ll_y, sh_ur_x, sh_ur_y, sv_ll_x, sv_ll_y);
-                    
+            
             //travel to the lower left exit of the bridge and relocalize
-            nav.travelTo(sv_ll_x, sv_ll_y-1);
-            lp.restartTask();
-            li.anyPointLocalization(sv_ll_x, sv_ll_y-1);
-            lp.killTask();
-            nav.travelTo(sv_ll_x, sv_ll_y-1);
+            nav.localizeAfterBridge(sh_ll_x, sh_ll_y, sh_ur_x, sh_ur_y, sv_ll_x, sv_ll_y, lp, li);
             
             //travel back to base
             if(greenCorner == 0) {
@@ -330,22 +324,13 @@ public class GameController extends Thread {
 			//bridge logic     
 			
 			//travel to lower left coordinates at entrance of bridge and localize
-			//coords for given orientation in doc
-            nav.travelTo(sh_ll_x-1, sh_ll_y); 
-            lp.restartTask();
-            li.anyPointLocalization(sh_ll_x-1, sh_ll_y); 
-            lp.killTask();
-            nav.travelTo(sh_ll_x-1, sh_ll_y);
+			nav.localizeBeforeBridge(sh_ll_x, sh_ll_y, sh_ur_x, sh_ur_y, lp, li);
             
             nav.crossBridge(sh_ll_x, sh_ll_y, sh_ur_x, sh_ur_y, sv_ll_x, sv_ll_y);
 			
 			//travel to the lower left exit of the bridge and relocalize
-			nav.travelTo(sv_ll_x, sv_ll_y-1);
-            lp.restartTask();
-            li.anyPointLocalization(sv_ll_x, sv_ll_y-1);
-            lp.killTask();
-            nav.travelTo(sv_ll_x, sv_ll_y-1);
-
+            nav.localizeAfterBridge(sh_ll_x, sh_ll_y, sh_ur_x, sh_ur_y, sv_ll_x, sv_ll_y, lp, li);
+		
 //            //now travel to flag coords
 //            //add flag logic here--------------------
             nav.travelTo(sg_ll_x, sg_ll_y);

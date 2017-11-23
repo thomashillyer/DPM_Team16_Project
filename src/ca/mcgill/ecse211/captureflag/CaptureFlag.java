@@ -37,7 +37,7 @@ public class CaptureFlag {
 
 	// Values based on 360 degree turn test
 	protected static final double WHEEL_RADIUS = 2.093;
-	protected static final double TRACK = 14.8;
+	protected static final double TRACK = 15.5; //14.8
 
 	protected static final double PULLEY_RADIUS = 1;
 
@@ -54,7 +54,7 @@ public class CaptureFlag {
 
 	protected static final double TILE_LENGTH = 30.48;
 
-	private static final String SERVER_IP = "192.168.2.17";
+	private static final String SERVER_IP = "192.168.2.21";
 
 	protected static final int TEAM_NUMBER = 1;
 	// Enable/disable printing of debug info from the WiFi class
@@ -113,7 +113,7 @@ public class CaptureFlag {
 				usPoller, nav, conn, flag);
 
 		odometer.start();
-		//odoDispl.start();
+		odoDispl.start();
 		gc.start();
 		t.clear();
 
