@@ -41,11 +41,11 @@ public class CaptureFlag {
 
 	protected static final double PULLEY_RADIUS = 1;
 
-	protected static final int ROTATIONSPEED = 160; //160
+	protected static final int ROTATIONSPEED = 160; 
 
 	protected static final int ACCELERATION = 500; 
 	protected static final int NAV_ACCELERATION = 100;
-	protected static final int FORWARDSPEED = 200;  //200
+	protected static final int FORWARDSPEED = 200; 
 
 	private static final int FILTER_OUT = 23;
 	private static int filterControl;
@@ -95,14 +95,7 @@ public class CaptureFlag {
 		UltrasonicPoller usPoller = new UltrasonicPoller(usSensor, usData, usLocal, flag);
 		// Initialize WifiConnection class
 		WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
-//		do {
-//			printMenu();
-//			option = Button.waitForAnyPress();
-//		} while (option != Button.ID_LEFT && option != Button.ID_RIGHT); // and wait for a button press. The button
 
-		// pass points to light localization
-		// TODO the following code is vestigial, game data will be retrieved from the
-		// server. Remove it to make way for getting data from server.
 		int[] points = { x0, y0, xC, yC, corner };
 		LightLocalization lightLocal = new LightLocalization(leftMotor, rightMotor, odometer, nav);
 
@@ -161,7 +154,6 @@ public class CaptureFlag {
 		
 		 t.clear(); // the screen at initialization
 		t.drawString("left/right = start", 0, 0);
-		// t.drawString("right = risingEdge", 0, 1);
 	}
 
 	/**

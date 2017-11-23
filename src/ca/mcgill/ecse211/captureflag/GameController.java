@@ -26,9 +26,6 @@ public class GameController extends Thread {
 	private Navigation nav;
 	private static WifiConnection conn;
 	private Odometer odo;
-
-	// private EV3LargeRegulatedMotor[] syncList = new EV3LargeRegulatedMotor[1];
-
 	private FlagDetection flag;
 	private LightPoller lp_flag;
 
@@ -139,7 +136,6 @@ public class GameController extends Thread {
 	 */
 	@SuppressWarnings("rawtypes")
 	public void run() {
-		// --------Integration---------
 		// directly updates the variables in GameController with the values from the
 		// server
 		getDataFromServer();
@@ -167,7 +163,6 @@ public class GameController extends Thread {
 			lp.killTask();
 			// end light localization
 
-
 			// green uses zipline and returns on bridge
 
 			// travel to point before zipline
@@ -182,31 +177,17 @@ public class GameController extends Thread {
 			li.anyPointLocalization(zo_g_x, zo_g_y); // dont pass a point because it assumes its close to the point it should
 			lp.killTask();
 			nav.travelTo(zo_g_x, zo_g_y);
-			// set x and y to point before the ramp
-			// odo.setX(zo_g_x * CaptureFlag.TILE_LENGTH);
-			// odo.setY(zo_g_y * CaptureFlag.TILE_LENGTH);
-			// end anypoint light localize
-
+			
 			// traverse zipline
 			// travel to start of zipline
 			zip.setSpeed(400);
-
 			zip.backward();
-			// zip.rotate(-CaptureFlag.convertDistance(CaptureFlag.PULLEY_RADIUS, 12 *
-			// CaptureFlag.TILE_LENGTH), true);
 			nav.travelTo(zc_g_x, zc_g_y);
 			
+			//travel across zipline based on a timer
 			double tempTheta = odo.getTheta();
-//			leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -5), true);
-//			rightMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 5), false);
-			// nav.turnTo(zc_g_x, zc_g_y);
-
 			leftMotor.forward();
 			rightMotor.forward();
-//			long milli = System.currentTimeMillis();
-//			while (System.currentTimeMillis() - milli < 5000);
-//			leftMotor.stop(true);
-//			rightMotor.stop(true);
 			
 			long milli = System.currentTimeMillis();
 			while (System.currentTimeMillis() - milli < 17100);
@@ -218,16 +199,12 @@ public class GameController extends Thread {
 			odo.setTheta(tempTheta);
 
 			nav.travelTo(zo_r_x, zo_r_y);
-			
-			//zip.stop();
 
 			// should now be about at end of zipline
 			// drive forward a block length
 			// localize assuming at zo_r
 			
 			lp.restartTask();
-			
-	//		li.afterZipLine();
 			
 			li.anyPointLocalization(zo_r_x, zo_r_y);
 			lp.killTask();
@@ -243,37 +220,6 @@ public class GameController extends Thread {
 			Sound.beep();
 			Sound.beep();
 			Sound.beep();
-//			 lp.restartTask();
-//	            li.anyPointLocalization(sr_ll_x, sr_ll_y); 
-//	            lp.killTask();
-//	            nav.travelTo(sr_ll_x, sr_ll_y);
-
-
-			// robot is now on the ground at the end of the zipline
-			// drive to approximately zo-r
-			// leftMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS,
-			// CaptureFlag.TILE_LENGTH), true);
-			// rightMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS,
-			// CaptureFlag.TILE_LENGTH), false);
-			//
-			// // localize at point after zipline
-			// lp.restartTask();
-			// li.do_localization(zo_r_x, zo_r_y);
-			// lp.killTask();
-			// // odo.setX(zo_r_x * CaptureFlag.TILE_LENGTH);
-			// // odo.setY(zo_r_y * CaptureFlag.TILE_LENGTH);
-			// // end localize at point after zipline
-			//
-			// // navigate to flag region
-			// calculateSearchRegionPoint();
-			// nav.travelTo(flag_zone_x, flag_zone_y);
-			// search for flag - not needed for beta demo
-			// flag.findFlag(); // TODO needs a lot of work
-			// end search for flag
-			
-			
-
-			// TODO after beta add logic for bridge traversal etc
 
 			//bridge logic
 			//travel to lower left coordinates at entrance of bridge and localize
@@ -290,9 +236,8 @@ public class GameController extends Thread {
               nav.travelTo(0.5, 0.5);
             }
             else if(greenCorner == 1) {
-              //(11.5, 0.5)
-              nav.travelTo(7, 1);
-              nav.travelTo(7.5, 0.5);
+              nav.travelTo(11, 1);
+              nav.travelTo(11.5, 0.5);
             }
             else if(greenCorner == 2) {
               nav.travelTo(11, 11);
@@ -314,9 +259,6 @@ public class GameController extends Thread {
 			// end light localization
 
 			// red uses bridge and returns over water
-
-			// TODO the rest
-			
 			//bridge logic     
 			
 			//travel to lower left coordinates at entrance of bridge and localize
@@ -328,7 +270,6 @@ public class GameController extends Thread {
             nav.localizeAfterBridge(sh_ll_x, sh_ll_y, sh_ur_x, sh_ur_y, sv_ll_x, sv_ll_y, lp, li);
 		
 //            //now travel to flag coords
-//            //add flag logic here--------------------
             nav.travelTo(sg_ll_x, sg_ll_y);
             lp.restartTask();
             li.anyPointLocalization(sg_ll_x, sg_ll_y);
@@ -341,31 +282,21 @@ public class GameController extends Thread {
             //travel to zipline 
             nav.travelTo(zo_g_x, zo_g_y);
 
-//            // anypoint light localize
+            // anypoint light localize
             lp.restartTask();
             li.anyPointLocalization(zo_g_x, zo_g_y); // dont pass a point because it assumes its close to the point it should
             lp.killTask();
             nav.travelTo(zo_g_x, zo_g_y);
-//
-//            // traverse zipline
-//            // travel to start of zipline
+
+            // traverse zipline
+            // travel to start of zipline
             zip.setSpeed(400);
-//
             zip.backward();
-//            // zip.rotate(-CaptureFlag.convertDistance(CaptureFlag.PULLEY_RADIUS, 12 *
-//            // CaptureFlag.TILE_LENGTH), true);
+            
+            //travel across zipline based on timer
             nav.travelTo(zc_g_x, zc_g_y);
-////          leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, -5), true);
-////          rightMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 5), false);
-//            // nav.turnTo(zc_g_x, zc_g_y);
-//
             leftMotor.forward();
             rightMotor.forward();
-////          long milli = System.currentTimeMillis();
-////          while (System.currentTimeMillis() - milli < 5000);
-////          leftMotor.stop(true);
-////          rightMotor.stop(true);
-//            
             long milli = System.currentTimeMillis();
             while (System.currentTimeMillis() - milli < 17000);
             leftMotor.stop(true);
@@ -373,25 +304,16 @@ public class GameController extends Thread {
             zip.stop(true);
             odo.setX(zc_r_x*CaptureFlag.TILE_LENGTH);
             odo.setY(zc_r_y*CaptureFlag.TILE_LENGTH);
-
             nav.travelTo(zo_r_x, zo_r_y);
-//            
-            //zip.stop();
-//
 //            // should now be about at end of zipline
 //            // drive forward a block length
 //            // localize assuming at zo_r
-//            
             lp.restartTask();
-            
-            
             li.anyPointLocalization(zo_r_x, zo_r_y);
             lp.killTask();
             nav.travelTo(zo_r_x, zo_r_y);
-
             
-            
-//            //travel back to base
+            //travel back to base
             if(redCorner == 0) {
               nav.travelTo(1,1);
               nav.travelTo(0.5, 0.5);
@@ -405,9 +327,8 @@ public class GameController extends Thread {
               nav.travelTo(11.5, 11.5);
             }
             else if(redCorner == 3) {
-//            (0.5,11.5)
-              nav.travelTo(1, 7);
-              nav.travelTo(0.5, 7.5);
+              nav.travelTo(1, 11);
+              nav.travelTo(0.5, 11.5);
             }
 		}
 		
@@ -425,8 +346,6 @@ public class GameController extends Thread {
 				flag_zone_x = (sg_ll_x + sg_ur_x) / 2;
 
 				// y is less than 6, search region is in the lower half of the board
-				// TODO may have weird effects if the search region is along the center axis of
-				// the board
 				if (sg_ll_y < 6 || sg_ur_y < 6) {
 					flag_zone_y = Math.max(sg_ll_y, sg_ur_y);
 				} else { // search region is in upper half of board
@@ -438,8 +357,6 @@ public class GameController extends Thread {
 				flag_zone_y = (sg_ll_y + sg_ur_y) / 2;
 
 				// search region is on left side of board
-				// TODO may have weird effects if the search region is along the center axis of
-				// the board
 				if (sg_ll_x < 6 || sg_ur_x < 6) {
 					flag_zone_x = Math.max(sg_ll_x, sg_ur_x);
 				} else {// search region is on right side of board
@@ -453,8 +370,6 @@ public class GameController extends Thread {
 				flag_zone_x = (sr_ll_x + sr_ur_x) / 2;
 
 				// y is less than 6, search region is in the lower half of the board
-				// TODO may have weird effects if the search region is along the center axis of
-				// the board
 				if (sr_ll_y < 6 || sr_ur_y < 6) {
 					flag_zone_y = Math.max(sr_ll_y, sr_ur_y);
 				} else { // search region is in upper half of board
@@ -466,8 +381,6 @@ public class GameController extends Thread {
 				flag_zone_y = (sr_ll_y + sr_ur_y) / 2;
 
 				// search region is on left side of board
-				// TODO may have weird effects if the search region is along the center axis of
-				// the board
 				if (sr_ll_x < 6 || sr_ur_x < 6) {
 					flag_zone_x = Math.max(sr_ll_x, sr_ur_x);
 				} else {// search region is on right side of board

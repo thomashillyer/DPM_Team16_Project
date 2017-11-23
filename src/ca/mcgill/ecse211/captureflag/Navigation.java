@@ -16,8 +16,6 @@ public class Navigation extends Thread {
 	private Odometer odometer;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
 
-	// private EV3LargeRegulatedMotor[] syncList = new EV3LargeRegulatedMotor[1];
-
 	/**
 	 * This is the constructor for the Navigation class.
 	 * 
@@ -34,14 +32,9 @@ public class Navigation extends Thread {
 		this.odometer = odometer;
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
-		// syncList[0] = leftMotor;
-		// rightMotor.synchronizeWith(syncList);
 	}
 
 	public void run() {
-		// leftMotor.stop(true);
-		// rightMotor.stop(true);
-
 	}
 
 	/**
@@ -68,34 +61,20 @@ public class Navigation extends Thread {
 		double deltaX = (x * CaptureFlag.TILE_LENGTH) - currX;
 		double deltaY = (y * CaptureFlag.TILE_LENGTH) - currY;
 
-		// // calculating the minimum angle using Math.atan2 method
-		// double theta = Math.atan2(deltaX, deltaY) - currTheta;
-
 		// rotate the robot towards its new way point
 		turnTo(x, y);
 
 		// calculate the distance to next point using the built in pythagore
 		// theorem
-		// TODO try Math.Pyth
 		double distToTravel = Math.pow(deltaX, 2) + Math.pow(deltaY, 2);
 		distToTravel = Math.sqrt(distToTravel);
 
 		// travel to the next point, and don't wait until the action is
 		// complete. So the boolean in both rotate method should be true
-
-		leftMotor.setSpeed(CaptureFlag.FORWARDSPEED); //had -1 here
+		leftMotor.setSpeed(CaptureFlag.FORWARDSPEED);
 		rightMotor.setSpeed(CaptureFlag.FORWARDSPEED);
-
-		// rightMotor.startSynchronization();
 		leftMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, distToTravel), true);
 		rightMotor.rotate(CaptureFlag.convertDistance(CaptureFlag.WHEEL_RADIUS, distToTravel), false);
-		// rightMotor.endSynchronization();
-
-		// rightMotor.startSynchronization();
-		// leftMotor.stop(true);
-		// rightMotor.stop(true);
-
-		// rightMotor.endSynchronization();
 	}
 
 	/**
@@ -126,10 +105,6 @@ public class Navigation extends Thread {
 
 		// calculating the minimum angle using Math.atan2 method
 		double theta = Math.atan2(deltaX, deltaY) - currTheta;
-//		System.out.println(theta * 180.0 / Math.PI);
-		// rightMotor.synchronizeWith(syncList);
-		// rightMotor.startSynchronization();
-
 		turn(theta);
 	}
 
@@ -163,12 +138,17 @@ public class Navigation extends Thread {
 			leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, theta), true);// -2
 			rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, theta), false);
 		}
-		// rightMotor.endSynchronization();
 	}
 	
-	
-	
-	//add javadoc for this
+	/**
+	 * Method will have the robot navigate across the middle of the bridge based on the given points
+	 * @param sh_ll_x lower left hand corner of horizontal shallow water zone x
+     * @param sh_ll_y lower left hand corner of horizontal shallow water zone y
+     * @param sh_ur_x upper right hand corner of horizontal shallow water zone x
+     * @param sh_ur_y upper right hand corner of horizontal shallow water zone y
+     * @param sv_ll_x lower left hand corner of vertical shallow water zone x
+     * @param sv_ll_y lower left hand corner of vertical shallow water zone y
+	 */
 	protected void crossBridge(int sh_ll_x, int sh_ll_y, int sh_ur_x, int sh_ur_y, int sv_ll_x, int sv_ll_y) {
 	  //based on orientation of bridge, traverse it in a certain manner
       if(sh_ll_x < sh_ur_x && sh_ll_y < sh_ur_y) {
@@ -193,6 +173,15 @@ public class Navigation extends Thread {
       }
 	}
 	
+	/**
+     * Method will perform light localization at 1 point away from the entrance of the bridge
+     * @param sh_ll_x lower left hand corner of horizontal shallow water zone x
+     * @param sh_ll_y lower left hand corner of horizontal shallow water zone y
+     * @param sh_ur_x upper right hand corner of horizontal shallow water zone x
+     * @param sh_ur_y upper right hand corner of horizontal shallow water zone y
+     * @param lp light poller
+     * @param li light localization object
+     */
 	protected void localizeBeforeBridge(int sh_ll_x, int sh_ll_y, int sh_ur_x, int sh_ur_y, LightPoller lp, LightLocalization li) {
 	  if(sh_ll_x < sh_ur_x && sh_ll_y < sh_ur_y) {
 	  travelTo(sh_ll_x-1, sh_ll_y); 
@@ -226,6 +215,17 @@ public class Navigation extends Thread {
 	  
 	}
 	
+	/**
+	 * Method will perform light localization at 1 point away from the exit of the bridge
+	 * @param sh_ll_x lower left hand corner of horizontal shallow water zone x
+	 * @param sh_ll_y lower left hand corner of horizontal shallow water zone y
+	 * @param sh_ur_x upper right hand corner of horizontal shallow water zone x
+	 * @param sh_ur_y upper right hand corner of horizontal shallow water zone y
+	 * @param sv_ll_x lower left hand corner of vertical shallow water zone x
+	 * @param sv_ll_y lower left hand corner of vertical shallow water zone y
+	 * @param lp light poller
+	 * @param li light localization object
+	 */
 	protected void localizeAfterBridge(int sh_ll_x, int sh_ll_y, int sh_ur_x, int sh_ur_y, int sv_ll_x, int sv_ll_y, LightPoller lp, LightLocalization li) {
 	  if(sh_ll_x < sh_ur_x && sh_ll_y < sh_ur_y) {
 	    travelTo(sv_ll_x, sv_ll_y-1);

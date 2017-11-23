@@ -41,14 +41,10 @@ public class LightPoller extends Thread {
 				value = (int) (csData[0] * 1000);
 				if (li != null) {
 					li.processData(value);
-				} else {
-					// TODO implement actual flag detection code
-					// flag.processLightSensorData(value);
-				}
+				} 
 				try {
 					Thread.sleep(50);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
