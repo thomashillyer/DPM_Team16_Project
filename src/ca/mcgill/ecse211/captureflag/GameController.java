@@ -209,7 +209,7 @@ public class GameController extends Thread {
 //			rightMotor.stop(true);
 			
 			long milli = System.currentTimeMillis();
-			while (System.currentTimeMillis() - milli < 17000);
+			while (System.currentTimeMillis() - milli < 17100);
 			leftMotor.stop(true);
             rightMotor.stop(true);
 			zip.stop(true);
