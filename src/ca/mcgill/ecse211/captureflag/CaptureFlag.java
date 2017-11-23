@@ -37,7 +37,7 @@ public class CaptureFlag {
 
 	// Values based on 360 degree turn test
 	protected static final double WHEEL_RADIUS = 2.093;
-	protected static final double TRACK = 15.5; //14.8
+	protected static final double TRACK = 14.8; 
 
 	protected static final double PULLEY_RADIUS = 1;
 
@@ -56,7 +56,7 @@ public class CaptureFlag {
 
 	private static final String SERVER_IP = "192.168.2.21";
 
-	protected static final int TEAM_NUMBER = 1;
+	protected static final int TEAM_NUMBER = 16;
 	// Enable/disable printing of debug info from the WiFi class
 	private static final boolean ENABLE_DEBUG_WIFI_PRINT = true;
 

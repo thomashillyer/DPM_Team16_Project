@@ -142,11 +142,7 @@ public class GameController extends Thread {
 		// --------Integration---------
 		// directly updates the variables in GameController with the values from the
 		// server
-	//	getDataFromServer();
-		leftMotor.setSpeed(160);
-		rightMotor.setSpeed(160);
-		leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), true); //378
-        rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 360), false);
+		getDataFromServer();
 		// calculate length of zipline
 		double zip_x = Math.abs(zc_g_x - zc_r_x) * CaptureFlag.TILE_LENGTH;
 		double zip_y = Math.abs(zc_g_y - zc_r_y) * CaptureFlag.TILE_LENGTH;
