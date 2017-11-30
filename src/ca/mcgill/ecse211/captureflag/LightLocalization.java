@@ -84,7 +84,7 @@ public class LightLocalization {
     rightMotor.setSpeed(CaptureFlag.ROTATIONSPEED);
     detectFourLines = true;
     leftMotor.rotate(CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 378),
-        true); // 375
+        true);
     rightMotor.rotate(-CaptureFlag.convertAngle(CaptureFlag.WHEEL_RADIUS, CaptureFlag.TRACK, 378),
         false);
     detectFourLines = false;
